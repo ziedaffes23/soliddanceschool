@@ -37,3 +37,8 @@ body{background:var(--paper);letter-spacing:-.01em}body.dark{--paper:#090909;--i
 /* Hero embeds */
 .hero-media .hero-embed{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover;pointer-events:none;transform:scale(1.18)}
 .video-mode:after{content:'VIDEO / LIVE';position:absolute;right:4vw;top:50%;z-index:2;color:var(--accent);font:10px var(--mono);letter-spacing:.2em;writing-mode:vertical-rl}
+
+/* Official Solid Dance School logo */
+.site-header .logo{display:flex;align-items:center;width:158px;height:48px;padding:7px 11px;background:#fff;line-height:0;overflow:hidden}
+.site-header .logo .site-logo{display:block;width:100%;height:auto;max-width:none;filter:none}
+@media(max-width:800px){.site-header .logo{width:132px;height:40px;padding:6px 9px}}

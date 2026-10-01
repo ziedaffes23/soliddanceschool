@@ -23,3 +23,9 @@ body{background:var(--paper);letter-spacing:-.01em}body.dark{--paper:#090909;--i
 .admin-btn.secondary{background:#fff;color:#111;border-color:#111}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.class-card:hover,.teacher-card:hover{transform:none}}
+
+/* Bilingual control */
+.language-switcher{display:flex;align-items:center;gap:7px;margin-right:10px;font:700 10px var(--mono);letter-spacing:.12em;color:rgba(255,255,255,.55)}
+.language-switcher button{appearance:none;border:0;background:transparent;padding:4px 2px;color:rgba(255,255,255,.55);font:inherit;letter-spacing:inherit;cursor:pointer;transition:color .2s ease,transform .2s ease}
+.language-switcher button:hover,.language-switcher button.active{color:var(--accent-soft);transform:translateY(-1px)}
+@media(max-width:800px){.language-switcher{margin-right:2px}.language-switcher span{display:none}.language-switcher button{font-size:9px}}

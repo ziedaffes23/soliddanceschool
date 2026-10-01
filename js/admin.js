@@ -22,7 +22,7 @@ function setupCountdown(){const e=getData().events.find(x=>x.published&&x.date);
 function initPublic(){setupCommon();setupHero();renderCards();setupCourses();setupGallery();setupRegistration();setupPricing();setupCountdown()}
 
 
-const adminSections={dashboard:'Dashboard',hero:'Hero management',registrations:'Registrations',classes:'Classes',schedules:'Schedules',teachers:'Teachers',events:'Events',news:'News',videos:'Videos',gallery:'Gallery',pages:'Page content',settings:'Settings'};
+const adminSections={dashboard:'Dashboard',registrations:'Registrations',leads:'Leads / Interested',students:'Students / Classes',payments:'Payments',packs:'Packs & Pricing',classes:'Classes',schedules:'Schedules',teachers:'Teachers',events:'Events',news:'News',videos:'Videos',gallery:'Gallery',hero:'Hero / Homepage',pages:'Page content',settings:'Settings'};
 function adminAuth(){if(sessionStorage.getItem('solidAdmin')!=='true'&&document.body.dataset.admin!=='login'){location.href='login.html';return false}return true}
 function adminNav(active){return `<aside class="admin-sidebar"><a class="logo" href="../index.html">SOLID<span>CONTROL CENTER</span></a><nav class="admin-nav">${Object.entries(adminSections).map(([k,v])=>`<a class="${k===active?'active':''}" href="${k==='dashboard'?'index.html':k+'.html'}">${v}</a>`).join('')}</nav><button class="admin-btn secondary" onclick="sessionStorage.removeItem('solidAdmin');location.href='login.html'">Log out</button></aside>`}
 function toast(msg){const t=document.querySelector('.toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}

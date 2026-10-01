@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://soliddanceschool.netlify.app/sitemap.xml

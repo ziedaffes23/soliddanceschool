@@ -1,0 +1,9 @@
+{
+  "name": "Solid Dance School",
+  "short_name": "Solid",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "lang": "fr"
+}

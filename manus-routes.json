@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "title": "Home"
+    },
+    {
+      "path": "/cours.html",
+      "title": "Classes"
+    },
+    {
+      "path": "/professeurs.html",
+      "title": "Teachers"
+    },
+    {
+      "path": "/horaires-tarifs.html",
+      "title": "Schedule"
+    },
+    {
+      "path": "/evenements.html",
+      "title": "Events"
+    },
+    {
+      "path": "/nouvelles.html",
+      "title": "News"
+    },
+    {
+      "path": "/videos.html",
+      "title": "Videos"
+    },
+    {
+      "path": "/galerie.html",
+      "title": "Gallery"
+    },
+    {
+      "path": "/la-salle.html",
+      "title": "The studio"
+    },
+    {
+      "path": "/contact.html",
+      "title": "Contact"
+    }
+  ]
+}

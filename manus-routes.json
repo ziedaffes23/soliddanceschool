@@ -45,6 +45,10 @@
       "title": "Admin login"
     },
     {
+      "path": "/admin",
+      "title": "Admin dashboard"
+    },
+    {
       "path": "/admin/index",
       "title": "Operations dashboard"
     },

@@ -134,3 +134,6 @@ html[dir="rtl"] .owner-grid,html[dir="rtl"] .page-cta{direction:rtl}.hero-action
 /* Admin-controlled public image treatment */
 body:not(.images-color) .hero-image,body:not(.images-color) .teacher-image,body:not(.images-color) .gallery-item img{filter:grayscale(1) contrast(1.2)}
 body.images-color .hero-image,body.images-color .teacher-image,body.images-color .gallery-item img{filter:none}
+
+/* Student assignment workflow */
+.class-list[hidden]{display:none}.class-list .admin-btn{margin-top:16px}.assignment-modal .ops-modal-card{max-width:620px}.class-list-toolbar{display:flex;gap:10px;flex-wrap:wrap}

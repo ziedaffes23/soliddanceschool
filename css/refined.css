@@ -110,3 +110,11 @@ html,body{max-width:100%;overflow-x:hidden}
   .ops-history div{grid-template-columns:1fr;gap:3px}
   .pay-summary strong{font-size:26px}
 }
+
+/* Shared official branding for admin surfaces. */
+.admin-brand{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:4px 0 14px;border-bottom:1px solid #333;color:#fff}
+.admin-brand img{display:block;width:min(164px,100%);height:auto}
+.admin-brand span,.admin-login-brand span{font:700 9px var(--mono);letter-spacing:.2em;color:#b44a59}
+.admin-login-brand{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:12px}
+.admin-login-brand img{display:block;width:min(250px,100%);height:auto}
+@media(max-width:600px){.admin-brand img{width:142px}.admin-login-brand img{width:min(220px,100%)}.admin-login-brand{align-items:center;text-align:center}}

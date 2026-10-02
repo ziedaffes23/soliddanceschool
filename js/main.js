@@ -30,3 +30,41 @@ function videoMarkup(row){const raw=String(row.url||'').trim();const url=/^(http
 function setupVideos(){const el=document.querySelector('[data-video-list]');if(!el)return;const videos=getData().videos.filter(isPublished).filter(v=>v.url);el.innerHTML=videos.length?videos.map((v,i)=>`<article class="video-card"><div class="video-frame">${videoMarkup(v)}</div><div class="video-card-meta"><span class="eyebrow">${String(i+1).padStart(2,'0')} / Motion</span><h2>${escapeHTML(v.title||'Untitled video')}</h2></div></article>`).join(''):`<div class="notice">${t('noVideos')}</div>`}
 function setupCountdown(){const e=getData().events.find(x=>x.published&&x.date);const out=document.querySelector('[data-countdown]');if(!out||!e)return;const tick=()=>{const diff=new Date(e.date)-new Date();if(diff<0)return;const days=Math.floor(diff/86400000);const hours=Math.floor(diff/3600000)%24;out.innerHTML=`<div><strong>${days}</strong><small>DAYS</small></div><div><strong>${hours}</strong><small>HOURS</small></div>`};tick();setInterval(tick,60000)}
 function initPublic(){setupCommon();setupHero();renderCards();setupCourses();setupGallery();setupRegistration();setupPricing();setupCountdown();setupVideos();translatePage()}
+
+
+/* Production polish: render public content from the same data source as the admin. */
+function publicEsc(value=''){return escapeHTML(value || '')}
+function publicPublished(list){return (Array.isArray(list)?list:[]).filter(item=>item.published!==false)}
+function publicPacks(data){return Array.isArray(data.packs)&&data.packs.length?data.packs:[
+  {name:'Pack 1',classesPerWeek:'1 course / week',classPrice:600,insurance:20,showFee:180,active:true},
+  {name:'Pack 2',classesPerWeek:'2 courses / week',classPrice:1100,insurance:20,showFee:180,active:true}
+].filter(x=>x.active!==false)}
+function setupPublicContent(){
+  const d=getData(), story=document.querySelector('[data-home-story]');
+  if(story){const text=d.siteSettings?.story||'Solid Dance School is a place for practice, connection and performance. Come as you are. Leave sharper.';story.textContent=text}
+  const event=publicPublished(d.events).find(x=>x.date&&new Date(x.date)>=new Date())||publicPublished(d.events)[0];
+  const title=document.querySelector('[data-home-event-title]'), desc=document.querySelector('[data-home-event-description]'), meta=document.querySelector('[data-home-event-meta]');
+  if(title) title.textContent=event?.title||'Community session';
+  if(desc) desc.textContent=event?.description||'New movement is coming soon. Follow the school for the next gathering.';
+  if(meta) meta.textContent=event?[event.date?new Date(event.date).toLocaleDateString(currentLang()==='fr'?'fr-FR':currentLang()==='ar'?'ar-TN':'en-US',{dateStyle:'long'}):'',event.location||'Sfax'].filter(Boolean).join(' · '):'Check back for the next event.';
+  const studio=document.querySelector('[data-studio-copy]');
+  if(studio) studio.innerHTML=`${publicEsc(d.siteSettings?.story||'Solid Dance School is a place for practice, connection and performance.')}<br><br>Visit us in Sfax. ${publicEsc(d.siteSettings?.address||'Sfax, Tunisia')}<br>${publicEsc(d.siteSettings?.hours||'Contact the school for opening hours.')}`;
+}
+function setupPublicEvents(){
+  const el=document.querySelector('[data-events-list]'); if(!el)return;
+  const events=publicPublished(getData().events);
+  if(!events.length){el.innerHTML='<div class="notice">No events published yet. Contact the school for upcoming sessions.</div>';return}
+  el.innerHTML=events.map((e,i)=>`<article class="event-card"><div class="eyebrow">${publicEsc(e.date?new Date(e.date).toLocaleDateString(currentLang()==='fr'?'fr-FR':currentLang()==='ar'?'ar-TN':'en-US',{dateStyle:'medium'}):'Upcoming')} ${e.location?`· ${publicEsc(e.location)}`:''}</div><h2 class="card-title">${publicEsc(e.title||`Event ${i+1}`)}</h2><p>${publicEsc(e.description||'Join the movement.')}</p><a class="button" data-i18n="preRegister" href="/contact">${publicEsc(t('preRegister'))}</a></article>`).join('');
+}
+function setupPublicSchedule(){
+  const el=document.querySelector('[data-schedule-rows]'); if(!el)return;
+  const rows=Array.isArray(getData().schedules)?getData().schedules:[];
+  el.innerHTML=rows.length?rows.map(r=>`<tr><td>${publicEsc(r.day||'—')}</td><td>${publicEsc(r.time||'—')}</td><td>${publicEsc(r.className||'—')}</td><td>${publicEsc(r.teacher||'—')}</td><td>${publicEsc(r.room||'—')}</td><td>${publicEsc(r.availability||'—')}</td></tr>`).join(''):'<tr><td colspan="6"><div class="notice">Schedule coming soon. Contact the school for current availability.</div></td></tr>';
+}
+function setupPublicPricing(){
+  const n=document.querySelector('#classCount'), f=document.querySelector('#familyCount'), out=document.querySelector('#priceOutput'); if(!n||!f||!out)return;
+  const packs=publicPacks(getData());
+  const update=()=>{const classes=Math.max(1,Number(n.value)||1), family=Math.max(1,Number(f.value)||1), pack=packs[Math.min(classes-1,packs.length-1)], total=(Number(pack.classPrice)||0)+(Number(pack.insurance)||0)+(Number(pack.showFee)||0);out.textContent=`${(total*family).toLocaleString('fr-FR')} DT / year`;out.dataset.note=`${pack.name} · ${family} ${family===1?'member':'members'}`};
+  n.addEventListener('input',update); f.addEventListener('input',update); update();
+}
+function initPublic(){setupCommon();setupHero();renderCards();setupCourses();setupGallery();setupRegistration();setupPublicPricing();setupCountdown();setupVideos();setupPublicContent();setupPublicEvents();setupPublicSchedule();translatePage()}

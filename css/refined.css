@@ -131,3 +131,6 @@ body.dark{--paper:#0b0b0b;--ink:#f4f0e9;--line:rgba(244,240,233,.22);background-
 html[dir="rtl"] .owner-grid,html[dir="rtl"] .page-cta{direction:rtl}.hero-actions{direction:ltr}
 .map-panel{display:flex;flex-direction:column;gap:14px;align-items:stretch;justify-content:stretch;padding:0;overflow:hidden}.map-embed{display:block;width:100%;min-height:310px;flex:1;border:0;filter:grayscale(1) contrast(1.08)}.map-link{display:inline-flex;align-items:center;justify-content:center;margin:0 22px 22px;min-height:42px;padding:0 18px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.map-link:hover{background:#111;color:#fff}
 @media(max-width:800px){.map-embed{min-height:240px}}
+/* Admin-controlled public image treatment */
+body:not(.images-color) .hero-image,body:not(.images-color) .teacher-image,body:not(.images-color) .gallery-item img{filter:grayscale(1) contrast(1.2)}
+body.images-color .hero-image,body.images-color .teacher-image,body.images-color .gallery-item img{filter:none}

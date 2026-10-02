@@ -118,3 +118,7 @@ html,body{max-width:100%;overflow-x:hidden}
 .admin-login-brand{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:12px}
 .admin-login-brand img{display:block;width:min(250px,100%);height:auto}
 @media(max-width:600px){.admin-brand img{width:142px}.admin-login-brand img{width:min(220px,100%)}.admin-login-brand{align-items:center;text-align:center}}
+
+
+/* Arabic RTL support */
+html[dir="rtl"] body{direction:rtl;text-align:right}html[dir="rtl"] .site-header,html[dir="rtl"] .hero-content,html[dir="rtl"] .section,html[dir="rtl"] .story,html[dir="rtl"] .page-hero{direction:rtl}html[dir="rtl"] .site-header .nav{direction:rtl}html[dir="rtl"] .hero h1 span:nth-child(2),html[dir="rtl"] .hero h1 span:nth-child(3){margin-left:0;margin-right:9vw}html[dir="rtl"] .registration-group legend{text-align:right}html[dir="rtl"] .registration-group .field,html[dir="rtl"] .registration-submit{text-align:right}html[dir="rtl"] .footer-links{direction:rtl}html[dir="rtl"] .language-switcher{direction:ltr}html[dir="rtl"] .filter{direction:rtl}@media(max-width:800px){html[dir="rtl"] .hero h1 span:nth-child(2),html[dir="rtl"] .hero h1 span:nth-child(3){margin-right:0}}

@@ -1,0 +1,29 @@
+name: Validate Supabase configuration
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate browser configuration
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('js/supabase-config.js').read_text()
+          assert 'SOLID_SUPABASE_CONFIG' in p
+          assert 'service_role' not in p
+          print('Supabase client configuration is present and does not contain service_role.')
+          PY
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
+            echo 'Optional GitHub Supabase secrets are configured for future build injection.'
+          else
+            echo 'GitHub Actions secrets are optional because the browser-safe config is committed.'
+          fi

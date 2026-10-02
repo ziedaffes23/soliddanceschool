@@ -3,7 +3,7 @@ const DEFAULT_DATA={siteSettings:{schoolName:'Solid Dance School',tagline:'Move 
 const UI_TRANSLATIONS={fr:{home:'Accueil',tagline:'Bouge autrement.',classes:'Cours',teachers:'Professeurs',schedule:'Horaires & tarifs',events:'Événements',gallery:'Galerie',contact:'Contact',admin:'Admin',theme:'Changer de thème',language:'Langue',discover:'Découvrir les cours'},en:{home:'Home',classes:'Classes',teachers:'Teachers',schedule:'Schedule & rates',events:'Events',gallery:'Gallery',contact:'Contact',admin:'Admin',theme:'Toggle theme',language:'Language',discover:'Discover classes'}};
 const clone=o=>JSON.parse(JSON.stringify(o));
 function getData(){try{return Object.assign(clone(DEFAULT_DATA),JSON.parse(localStorage.getItem('solidData')||'{}'))}catch{return clone(DEFAULT_DATA)}}
-function saveData(data){localStorage.setItem('solidData',JSON.stringify(data))}
+function saveData(data){localStorage.setItem('solidData',JSON.stringify(data));window.solidCloud?.save(data)}
 function mergeData(){const d=getData(); return d}
 function escapeHTML(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 function cleanInternalUrl(url=''){const raw=String(url||'');if(/^(https?:|#|mailto:|tel:)/i.test(raw))return raw;let clean=raw.replace(/^\.\//,'').replace(/(^|\/)index\.html(?=([?#]|$))/,'$1').replace(/\.html(?=([?#]|$))/g,'').replace(/^\/+/, '');return clean?'/'+clean:'/'}

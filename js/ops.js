@@ -26,7 +26,7 @@
   function data(){
     const d=rawData(); d.registrations=(d.registrations||[]).map(normalize); d.packs=Array.isArray(d.packs)&&d.packs.length?d.packs:clone(PACK_DEFAULTS); d.classes=d.classes||[]; d.paymentMethods=Array.isArray(d.paymentMethods)&&d.paymentMethods.length?d.paymentMethods:['Cash','Bank card','Cheque','Other']; d.teachers=d.teachers||[]; d.schedules=d.schedules||[]; d.opsVersion=2; return d;
   }
-  function save(d){localStorage.setItem('solidData',JSON.stringify(d))}
+  function save(d){localStorage.setItem('solidData',JSON.stringify(d));window.solidCloud?.save(d)}
   function record(d,r,action,detail=''){r.audit.unshift({id:id('A'),at:new Date().toISOString(),action,detail});}
   function packFor(d,r){return d.packs.find(p=>p.id===r.packId)||null}
   function totalFor(d,r){const p=packFor(d,r); if(p){r.paymentPlan.classPrice=Number(p.classPrice)||0;r.paymentPlan.insurance=Number(p.insurance)||0;r.paymentPlan.showFee=Number(p.showFee)||0;r.paymentPlan.total=r.paymentPlan.classPrice+r.paymentPlan.insurance+r.paymentPlan.showFee} return Number(r.paymentPlan.total)||0}

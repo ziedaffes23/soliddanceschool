@@ -1,31 +1,112 @@
 {
   "routes": [
-    {"path":"/","title":"Home"},
-    {"path":"/cours.html","title":"Classes"},
-    {"path":"/professeurs.html","title":"Teachers"},
-    {"path":"/horaires-tarifs.html","title":"Schedule"},
-    {"path":"/evenements.html","title":"Events"},
-    {"path":"/nouvelles.html","title":"News"},
-    {"path":"/videos.html","title":"Videos"},
-    {"path":"/galerie.html","title":"Gallery"},
-    {"path":"/la-salle.html","title":"The studio"},
-    {"path":"/contact.html","title":"Contact"},
-    {"path":"/admin/login.html","title":"Admin login"},
-    {"path":"/admin/index.html","title":"Operations dashboard"},
-    {"path":"/admin/registrations.html","title":"Registrations"},
-    {"path":"/admin/leads.html","title":"Interested leads"},
-    {"path":"/admin/students.html","title":"Students and class lists"},
-    {"path":"/admin/payments.html","title":"Payments"},
-    {"path":"/admin/packs.html","title":"Packs and pricing"},
-    {"path":"/admin/classes.html","title":"Admin classes"},
-    {"path":"/admin/schedules.html","title":"Admin schedules"},
-    {"path":"/admin/teachers.html","title":"Admin teachers"},
-    {"path":"/admin/events.html","title":"Admin events"},
-    {"path":"/admin/news.html","title":"Admin news"},
-    {"path":"/admin/videos.html","title":"Admin videos"},
-    {"path":"/admin/gallery.html","title":"Admin gallery"},
-    {"path":"/admin/hero.html","title":"Hero management"},
-    {"path":"/admin/pages.html","title":"Page content"},
-    {"path":"/admin/settings.html","title":"Settings"}
+    {
+      "path": "/",
+      "title": "Home"
+    },
+    {
+      "path": "/cours",
+      "title": "Classes"
+    },
+    {
+      "path": "/professeurs",
+      "title": "Teachers"
+    },
+    {
+      "path": "/horaires-tarifs",
+      "title": "Schedule"
+    },
+    {
+      "path": "/evenements",
+      "title": "Events"
+    },
+    {
+      "path": "/nouvelles",
+      "title": "News"
+    },
+    {
+      "path": "/videos",
+      "title": "Videos"
+    },
+    {
+      "path": "/galerie",
+      "title": "Gallery"
+    },
+    {
+      "path": "/la-salle",
+      "title": "The studio"
+    },
+    {
+      "path": "/contact",
+      "title": "Contact"
+    },
+    {
+      "path": "/admin/login",
+      "title": "Admin login"
+    },
+    {
+      "path": "/admin/index",
+      "title": "Operations dashboard"
+    },
+    {
+      "path": "/admin/registrations",
+      "title": "Registrations"
+    },
+    {
+      "path": "/admin/leads",
+      "title": "Interested leads"
+    },
+    {
+      "path": "/admin/students",
+      "title": "Students and class lists"
+    },
+    {
+      "path": "/admin/payments",
+      "title": "Payments"
+    },
+    {
+      "path": "/admin/packs",
+      "title": "Packs and pricing"
+    },
+    {
+      "path": "/admin/classes",
+      "title": "Admin classes"
+    },
+    {
+      "path": "/admin/schedules",
+      "title": "Admin schedules"
+    },
+    {
+      "path": "/admin/teachers",
+      "title": "Admin teachers"
+    },
+    {
+      "path": "/admin/events",
+      "title": "Admin events"
+    },
+    {
+      "path": "/admin/news",
+      "title": "Admin news"
+    },
+    {
+      "path": "/admin/videos",
+      "title": "Admin videos"
+    },
+    {
+      "path": "/admin/gallery",
+      "title": "Admin gallery"
+    },
+    {
+      "path": "/admin/hero",
+      "title": "Hero management"
+    },
+    {
+      "path": "/admin/pages",
+      "title": "Page content"
+    },
+    {
+      "path": "/admin/settings",
+      "title": "Settings"
+    }
   ]
 }

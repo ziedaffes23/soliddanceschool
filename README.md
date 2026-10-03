@@ -62,3 +62,7 @@ Classes, teachers, schedules, events, videos and gallery records are structured 
 ### Admin auth configuration
 
 `js/admin-config.js` intentionally ships with empty values. Set a SHA-256 password hash only in a private staging deployment; do not commit real credentials. For production, replace `setupLogin()` with Supabase Auth and server-side authorization.
+
+### Admin roles
+
+The staging login supports two roles: `admin` has full dashboard access; `manager` is limited to Dashboard, Registrations, Leads, Students/class assignment, and Payments. This restriction is enforced on navigation and direct route access.

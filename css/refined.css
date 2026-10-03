@@ -189,3 +189,7 @@ body[data-page="home"] .hero-only .hero-embed{display:block;width:100%;height:10
 body[data-page="home"] .hero-only .hero-media video,body[data-page="home"] .hero-only .hero-embed{pointer-events:none}
 
 .fiche-modal output{display:block;font:700 20px var(--display);color:var(--accent);padding-top:8px}
+
+/* Do not show the editorial PHOTO fallback over a successfully loaded teacher image. */
+.portrait-fallback[hidden]{display:none!important}
+.teacher-portrait:has(.teacher-image:not([src=""])) .portrait-fallback{display:none!important}

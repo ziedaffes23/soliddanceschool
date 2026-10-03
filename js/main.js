@@ -40,7 +40,9 @@ function publicPacks(data){return Array.isArray(data.packs)&&data.packs.length?d
   {name:'Pack 2',classesPerWeek:'2 courses / week',classPrice:1100,insurance:20,showFee:180,active:true}
 ].filter(x=>x.active!==false)}
 function setupPublicContent(){
-  const d=getData(), story=document.querySelector('[data-home-story]');
+  const d=getData(), contactStrip=document.querySelector('[data-home-contact-marquee]');
+  if(contactStrip){const settings=d.siteSettings||{},clean=(value,fallback)=>value&& !/^\[[A-Z_]+\]$/.test(value)?value:fallback;contactStrip.textContent=[clean(settings.schoolName,'Dance School Solide'),clean(settings.address,'Dance School Solide, Sfax, Tunisia'),clean(settings.phone,'+216 55 939 535 / +216 93 939 526'),clean(settings.email,'tarakbouzid@gmail.com'),'Instagram','Site by Zied Affes'].join(' · ')+' · ';}
+  const story=document.querySelector('[data-home-story]');
   if(story){const text=d.siteSettings?.story||'Solid Dance School is a place for practice, connection and performance. Come as you are. Leave sharper.';story.textContent=text}
   const event=publicPublished(d.events).find(x=>x.date&&new Date(x.date)>=new Date())||publicPublished(d.events)[0];
   const title=document.querySelector('[data-home-event-title]'), desc=document.querySelector('[data-home-event-description]'), meta=document.querySelector('[data-home-event-meta]');

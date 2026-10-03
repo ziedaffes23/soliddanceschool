@@ -170,3 +170,9 @@ body[data-page="home"]{background:#303033;color:#fff;overflow-x:hidden}body[data
 body[data-page="home"] .hero-only .hero-image{object-fit:contain!important;object-position:center center!important;background:#111;transform:none!important}
 body[data-page="home"] .hero-only .hero-media .hero-embed{object-fit:contain!important;object-position:center center!important;transform:none!important;background:#111}
 body[data-page="home"] .hero-only .hero-media.video-mode:after{display:none}
+
+/* Uploaded hero media fills the complete viewport area without cropping its frame. */
+body[data-page="home"] .hero-only .hero-media{inset:0!important;width:100%;height:100%;background:#111}
+body[data-page="home"] .hero-only .hero-content{inset:0 0 24px!important}
+body[data-page="home"] .hero-only .hero-image{width:100%;height:100%;max-width:none;max-height:none;object-fit:contain!important}
+@media(max-width:900px){body[data-page="home"] .hero-only .hero-media{inset:0!important}body[data-page="home"] .hero-only .hero-content{inset:0 0 22px!important}}

@@ -176,3 +176,9 @@ body[data-page="home"] .hero-only .hero-media{inset:0!important;width:100%;heigh
 body[data-page="home"] .hero-only .hero-content{inset:0 0 24px!important}
 body[data-page="home"] .hero-only .hero-image{width:100%;height:100%;max-width:none;max-height:none;object-fit:contain!important}
 @media(max-width:900px){body[data-page="home"] .hero-only .hero-media{inset:0!important}body[data-page="home"] .hero-only .hero-content{inset:0 0 22px!important}}
+
+/* Persistent public navigation: remains visible above every scrolling page layer. */
+body:not([data-admin]) .site-header{position:fixed!important;top:0;left:0;right:0;width:100%;z-index:1000!important;transform:translateZ(0);isolation:isolate;background:linear-gradient(180deg,rgba(0,0,0,.9),rgba(0,0,0,.35) 75%,transparent);backdrop-filter:blur(6px)}
+body:not([data-admin]) .site-header .nav{position:relative;z-index:1001}
+body:not([data-admin]) .site-header .header-actions,body:not([data-admin]) .site-header .logo{position:relative;z-index:1002}
+@media(max-width:800px){body:not([data-admin]) .site-header .nav{position:absolute;z-index:1003;background:#111;box-shadow:0 10px 24px rgba(0,0,0,.35)}}

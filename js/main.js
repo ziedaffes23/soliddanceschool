@@ -67,4 +67,14 @@ function setupPublicPricing(){
   const update=()=>{const classes=Math.max(1,Number(n.value)||1), family=Math.max(1,Number(f.value)||1), pack=packs[Math.min(classes-1,packs.length-1)], total=(Number(pack.classPrice)||0)+(Number(pack.insurance)||0)+(Number(pack.showFee)||0);out.textContent=`${(total*family).toLocaleString('fr-FR')} DT / year`;out.dataset.note=`${pack.name} · ${family} ${family===1?'member':'members'}`};
   n.addEventListener('input',update); f.addEventListener('input',update); update();
 }
-function initPublic(){setupCommon();setupHero();renderCards();setupCourses();setupGallery();setupRegistration();setupPublicPricing();setupCountdown();setupVideos();setupPublicContent();setupPublicEvents();setupPublicSchedule();translatePage()}
+function setupMotion(){
+  const targets=[...document.querySelectorAll('.hero h1,.page-hero h1,.section-title,.statement,.card-title,.teacher-feature h2,.page-cta h2,.event-feature h3')];
+  const wrapWords=el=>{if(el.dataset.motionReady)return;el.dataset.motionReady='true';let index=0;const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement?.closest('script,style')?NodeFilter.FILTER_REJECT:(n.nodeValue||'').trim()?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);nodes.forEach(node=>{const frag=document.createDocumentFragment();node.nodeValue.split(/(\s+)/).forEach(part=>{if(!part.trim()){frag.appendChild(document.createTextNode(part));return}const span=document.createElement('span');span.className='word';span.style.setProperty('--word-index',index++);span.textContent=part;frag.appendChild(span)});node.parentNode.replaceChild(frag,node)});el.classList.add('motion-words')};
+  targets.forEach(wrapWords);
+  document.querySelectorAll('.class-card,.teacher-card,.event-card,.gallery-item,.section-head,.story p,.page-cta,.owner-card,.map-panel,.video-card').forEach((el,i)=>{el.classList.add('motion-reveal');el.style.setProperty('--reveal-index',i%8)});
+  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target)}}),{threshold:.14,rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.motion-words,.motion-reveal').forEach(el=>observer.observe(el));
+  requestAnimationFrame(()=>document.body.classList.add('page-ready'));
+  document.querySelectorAll('a[href]').forEach(link=>link.addEventListener('click',e=>{const href=link.getAttribute('href');if(!href||href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('tel:')||link.target==='_blank'||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;let url;try{url=new URL(href,location.href)}catch{return}if(url.origin!==location.origin)return;e.preventDefault();document.body.classList.add('page-leave');setTimeout(()=>{location.href=url.href},260)}));
+}
+function initPublic(){setupCommon();setupHero();renderCards();setupCourses();setupGallery();setupRegistration();setupPublicPricing();setupCountdown();setupVideos();setupPublicContent();setupPublicEvents();setupPublicSchedule();translatePage();setupMotion()}

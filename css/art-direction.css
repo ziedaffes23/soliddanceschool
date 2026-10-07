@@ -264,3 +264,68 @@ body[data-admin="login"] .admin-btn{border:2px solid var(--ad-black)!important;b
 body[data-admin="login"] .admin-btn:hover{background:var(--ad-lime)!important;color:var(--ad-black)!important;border-color:var(--ad-black)!important}
 body[data-admin="login"] .field input{border:0;border-bottom:2px solid var(--ad-black);border-radius:0;background:transparent;color:var(--ad-black);font:16px var(--ad-body)}
 body[data-admin="login"] .notice{border-left:4px solid var(--ad-lime);border-radius:0;background:var(--ad-black);color:var(--ad-white)}
+
+/* Art Direction 02 — structural shell, not a theme overlay */
+body[data-page] .site-header.site-header-zero{height:76px;padding:8px 22px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
+body[data-page] .site-header-zero:before{content:'SOLID / DANCE SCHOOL';left:22px;top:5px}
+body[data-page] .site-header-zero:after{content:'SFAX — 34°44′N / 10°46′E';right:22px;top:5px}
+body[data-page] .site-header-zero .logo{display:flex;align-items:center;gap:10px;justify-self:center;position:relative;z-index:2}
+body[data-page] .site-header-zero .logo:before{content:'INDEX / 00';color:var(--ad-lime);font:8px var(--ad-mono);writing-mode:vertical-rl;letter-spacing:.08em}
+body[data-page] .site-header-zero .site-logo{width:126px!important}
+body[data-page] .site-header-zero .header-code{justify-self:start;color:var(--ad-white);font:8px/1.3 var(--ad-mono);letter-spacing:.12em;text-transform:uppercase}
+body[data-page] .site-header-zero .header-code b{display:block;color:var(--ad-lime);font:20px var(--ad-display);letter-spacing:.02em}
+body[data-page] .site-header-zero .header-actions{justify-self:end;display:flex;align-items:center;gap:8px;margin:0}
+body[data-page] .site-header-zero .menu-btn{min-width:68px;height:36px;padding:0 10px;font:9px var(--ad-mono);letter-spacing:.12em}
+body[data-page] .site-header-zero .menu-btn[aria-expanded="true"]{background:var(--ad-lime);color:var(--ad-black)}
+body[data-page] .site-header-zero .nav.open{padding-top:120px}
+body[data-page] .site-header-zero .nav.open:after{content:'MOVE / MAKE / REPEAT';position:absolute;right:8vw;bottom:40px;color:var(--ad-black);font:10px var(--ad-mono);letter-spacing:.2em;transform:rotate(-90deg);transform-origin:right bottom}
+
+body[data-page="home"] .zero-cover{min-height:100svh;height:auto;padding-top:76px!important}
+body[data-page="home"] .zero-cover .hero-content{inset:76px 0 0;padding:0 5vw 6vh!important}
+body[data-page="home"] .zero-cover .hero-content:after{content:'[ LIVE / 001 ]';position:absolute;right:5vw;top:16vh;color:var(--ad-lime);font:10px var(--ad-mono);letter-spacing:.18em}
+body[data-page="home"] .zero-cover .hero-sub{bottom:5vh;left:5vw;right:5vw}
+body[data-page="home"] .zero-cover .hero-actions:before{content:'ENTER THE SCHOOL';display:block;align-self:center;margin-right:14px;color:var(--ad-lime);font:9px var(--ad-mono);letter-spacing:.14em}
+body[data-page="home"] .zero-cover .contact-marquee{position:absolute;bottom:0;left:0;right:0}
+body[data-page="home"] .zero-manifest{min-height:88vh;display:grid;grid-template-columns:12% 1fr;gap:5vw;align-items:center;background:var(--ad-white)!important;color:var(--ad-black)!important}
+body[data-page="home"] .zero-manifest .home-v2-manifest{display:contents}
+body[data-page="home"] .zero-manifest .home-v2-manifest>div:nth-child(2){align-self:center}
+body[data-page="home"] .zero-manifest .home-v2-copy{align-self:end;max-width:25ch;border-left:3px solid var(--ad-black);padding-left:14px}
+body[data-page="home"] .zero-manifest .home-v2-manifest-grid{grid-column:2;align-self:end;margin-top:4vh}
+body[data-page="home"] .zero-signal{min-height:78vh;position:relative;display:grid;place-items:center;padding:10vw;background:var(--ad-lime);color:var(--ad-black);overflow:hidden}
+body[data-page="home"] .zero-signal:before{content:'02';position:absolute;left:4vw;top:5vh;font:clamp(120px,24vw,340px)/.6 var(--ad-display);color:transparent;-webkit-text-stroke:2px var(--ad-black)}
+body[data-page="home"] .zero-signal:after{content:'THE SCHOOL IS A BODY / THE BODY IS A SCORE';position:absolute;right:4vw;bottom:6vh;font:10px var(--ad-mono);letter-spacing:.18em;writing-mode:vertical-rl}
+body[data-page="home"] .zero-signal [data-home-story]{position:relative;z-index:1;max-width:12ch;font:clamp(54px,9vw,140px)/.78 var(--ad-display);letter-spacing:-.06em;text-transform:uppercase;text-align:center}
+body[data-page="home"] .zero-program{min-height:100vh;display:block;background:var(--ad-black)!important;color:var(--ad-white)!important}
+body[data-page="home"] .zero-program .home-v2-program-head{max-width:100%;border-bottom:3px solid var(--ad-lime);padding-bottom:30px}
+body[data-page="home"] .zero-program .home-v2-program-list{margin-top:8vh}
+body[data-page="home"] .zero-join{min-height:72vh;display:flex;flex-direction:column;justify-content:space-between;background:var(--ad-white)!important;color:var(--ad-black)!important}
+body[data-page="home"] .zero-join:before{content:'09 / JOIN SOLID';top:32px;left:7vw}
+body[data-page="home"] .zero-join h2{font-size:clamp(110px,22vw,350px)!important;align-self:flex-end}
+body[data-page="home"] .zero-join .button{align-self:flex-start}
+body[data-page] .footer.footer-zero{display:block!important;min-height:68vh;padding:8vh 7vw 30px;background:var(--ad-black)!important;color:var(--ad-white);border-top:5px solid var(--ad-lime);position:relative;overflow:hidden}
+body[data-page] .footer-zero .footer-monument{font:clamp(150px,28vw,460px)/.6 var(--ad-display);letter-spacing:-.1em;color:var(--ad-lime);white-space:nowrap;margin-left:-.07em}
+body[data-page] .footer-zero .footer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:11vh;border-top:2px solid var(--ad-white);padding-top:18px;font:10px/1.6 var(--ad-mono);text-transform:uppercase}
+body[data-page] .footer-zero .footer-grid strong{display:block;color:var(--ad-lime);font:24px var(--ad-display);letter-spacing:.02em}
+body[data-page] .footer-zero .footer-grid a:hover{color:var(--ad-lime)}
+body[data-page] .footer-zero .site-credit{margin-top:10vh;color:var(--ad-white);font:9px var(--ad-mono);letter-spacing:.14em;text-transform:uppercase}
+body[data-page="schedule"] .schedule-section{min-height:90vh}
+body[data-page="schedule"] .schedule-section .table-wrap{display:none!important}
+body[data-page="schedule"] .schedule-section>.admin-panel{margin-top:8vh!important}
+body[data-page="schedule"] .schedule-board{display:block!important}
+body[data-page="schedule"] .schedule-day header{display:flex;align-items:baseline;gap:18px;margin-bottom:18px}
+body[data-page="schedule"] .schedule-day-number{font:26px var(--ad-mono);color:var(--ad-white)}
+body[data-page="schedule"] .schedule-day-count{margin-left:auto;font:9px var(--ad-mono);color:var(--ad-lime);text-transform:uppercase}
+body[data-page="schedule"] .schedule-slots{display:grid;gap:9px}
+body[data-page="schedule"] .schedule-slot{display:grid;grid-template-columns:22% 1fr auto;align-items:end;border:2px solid var(--ad-white);padding:13px 15px;margin:0;background:var(--ad-black)}
+body[data-page="schedule"] .schedule-slot:hover{background:var(--ad-lime);color:var(--ad-black);border-color:var(--ad-lime)}
+body[data-page="schedule"] .schedule-slot time{font-size:clamp(40px,6vw,78px)}
+body[data-page="schedule"] .schedule-slot h4{font:clamp(26px,4vw,54px)/.8 var(--ad-display);margin:0;text-transform:uppercase}
+body[data-page="schedule"] .schedule-slot p{font:9px var(--ad-mono);margin:7px 0 0}
+body[data-page="schedule"] .schedule-slot .schedule-availability{font:9px var(--ad-mono);color:var(--ad-lime);text-transform:uppercase}
+body[data-page="schedule"] .schedule-slot:hover .schedule-availability{color:var(--ad-black)}
+@media(max-width:900px){
+  body[data-page] .site-header.site-header-zero{grid-template-columns:1fr auto;height:64px;padding:8px 14px}body[data-page] .site-header-zero .header-code{display:none}body[data-page] .site-header-zero:before{left:14px}body[data-page] .site-header-zero:after{right:14px}body[data-page] .site-header-zero .logo{justify-self:start;margin-left:0}body[data-page] .site-header-zero .site-logo{width:112px!important}
+  body[data-page="home"] .zero-manifest{display:block;min-height:0}body[data-page="home"] .zero-manifest .home-v2-copy{margin:28px 0}body[data-page="home"] .zero-manifest .home-v2-manifest-grid{margin-top:42px}body[data-page="home"] .zero-signal{min-height:64vh}body[data-page="home"] .zero-signal [data-home-story]{font-size:16vw}body[data-page="home"] .zero-join h2{font-size:25vw!important}
+  body[data-page] .footer-zero .footer-monument{font-size:30vw}body[data-page] .footer-zero .footer-grid{grid-template-columns:1fr;margin-top:7vh}
+  body[data-page="schedule"] .schedule-day header{display:block}body[data-page="schedule"] .schedule-day-count{display:block;margin:8px 0}body[data-page="schedule"] .schedule-slot{grid-template-columns:1fr;gap:9px}body[data-page="schedule"] .schedule-slot .schedule-availability{justify-self:start}
+}

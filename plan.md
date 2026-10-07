@@ -38,3 +38,8 @@ Solid is a Sfax dance school for people who want disciplined practice with a fea
 ## Non-negotiables
 
 Do not break registration, Interested/Not Interested leads, students, payment tracking, installments, classes, teachers, schedules, events, news, videos, gallery, hero CMS video/image selection, Google Sheets backup, WhatsApp, pricing calculator, calendar export, French/English/Arabic RTL, authentication, SEO, accessibility, or admin account permissions. The admin must still control hero video/image, poster/mobile image, title, subtitle, CTA, active state, and publication state.
+
+
+## Structural rebuild pass
+
+The follow-up brief required removing the old composition rather than recoloring it. The public shell now uses a new generated technical header with a poster-like full-screen menu, a monumental editorial footer, a from-zero homepage sequence (cover / manifesto / school statement / programme / join), and a schedule scene built from a graphic timetable rather than the legacy table. The public runtime cache key was bumped to `art8`, and the duplicate directory routes remain synchronized. Existing data attributes and backend calls were deliberately retained at the new semantic anchors.

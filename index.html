@@ -12,31 +12,24 @@
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/refined.css?v=cy-grotesk1">
   <link rel="stylesheet" href="/css/editorial-v2.css?v=4">
-  <link rel="stylesheet" href="/css/art-direction.css?v=2">
+  <link rel="stylesheet" href="/css/art-direction.css?v=3">
 </head>
 <body data-page="home">
-  <div class="solid-intro" data-solid-intro aria-hidden="true">
-    <div class="solid-intro-grid"></div>
-    <div class="solid-intro-mark"><img src="/assets/solid-dance-school-logo-dark.png" alt="Solid Dance School"><span>MOVE DIFFERENT.</span></div>
-    <div class="solid-intro-line"></div>
-    <p class="solid-intro-credit">SOLID DANCE SCHOOL · SFAX / TUNISIA</p>
-    <button class="solid-intro-skip" type="button" data-intro-skip>Skip intro</button>
-  </div>
-  <main>
-    <section class="hero hero-only">
+  <main class="home-zero">
+    <section class="hero hero-only zero-cover" aria-labelledby="home-title">
       <div class="hero-media"><div class="hero-placeholder">MOVE</div></div>
       <div class="hero-content">
-        <div class="eyebrow">Sfax / Tunisia</div>
-        <h1><span>SOLID</span><span>DANCE</span><span>SCHOOL</span></h1>
+        <div class="eyebrow">Sfax / Tunisia / 2026</div>
+        <h1 id="home-title"><span>SOLID</span><span>DANCE</span><span>SCHOOL</span></h1>
         <div class="hero-sub">
-          <p>Move different. A studio for bodies, rhythm and fearless expression.</p>
+          <p data-home-story>Solid Dance School is a place for practice, connection and performance. Come as you are. Leave sharper.</p>
           <span class="hero-actions"><a class="button invert" href="/cours">Discover classes</a><a class="button pre-register" data-i18n="preRegister" href="/contact">Pre-register</a></span>
         </div>
       </div>
-      <div class="contact-marquee" aria-label="Solid Dance School contact information"><div class="contact-marquee-track" data-home-contact-marquee>Dance School Solide · Sfax, Tunisia · +216 55 939 535 · +216 93 939 526 · tarakbouzid@gmail.com · Instagram ·&nbsp;</div></div>
+      <div class="contact-marquee" aria-label="Solid Dance School contact information"><div class="contact-marquee-track" data-home-contact-marquee>Dance School Solide · Sfax, Tunisia · +216 55 939 535 · +216 93 939 526 · tarakbouzid@gmail.com · Instagram ·</div></div>
     </section>
 
-    <section class="home-v2-section" aria-labelledby="home-manifest-title">
+    <section class="home-v2-section zero-manifest" aria-labelledby="home-manifest-title">
       <div class="home-v2-manifest">
         <div class="home-v2-index">01</div>
         <div><div class="home-v2-kicker" data-home-copy="manifestKicker">Solid / Practice</div><h2 id="home-manifest-title" class="home-v2-title" data-home-copy="manifestTitle">A BODY<br>OF WORK.</h2></div>
@@ -49,17 +42,19 @@
       </div>
     </section>
 
-    <section class="home-v2-section dark" aria-labelledby="home-program-title">
+    <section class="zero-signal" aria-label="The Solid school statement"><p data-home-story>Solid Dance School is a place for practice, connection and performance. Come as you are. Leave sharper.</p></section>
+
+    <section class="home-v2-section dark zero-program" aria-labelledby="home-program-title">
       <div class="home-v2-program-head"><div><div class="home-v2-kicker" data-home-copy="programKicker">Solid / Programme</div><h2 id="home-program-title" data-home-copy="programTitle">The<br>programme.</h2></div><p data-home-copy="programCopy">Your next practice is already waiting. Explore the current classes and choose a new rhythm.</p></div>
       <div class="home-v2-program-list" data-home-program></div>
     </section>
 
-    <section class="home-v2-section red home-v2-closer" aria-labelledby="home-closer-title">
-      <div><div class="home-v2-kicker" data-home-copy="closerKicker">Solid / Next step</div><h2 id="home-closer-title"><span data-home-copy="closerLineOne">Ready</span><br><span data-home-copy="closerLineTwo">to move?</span></h2></div>
-      <a class="button invert" data-i18n="preRegister" href="/contact">Pre-register</a>
+    <section class="home-v2-section zero-join" aria-labelledby="home-join-title">
+      <div><div class="home-v2-kicker" data-home-copy="closerKicker">Solid / Next step</div><h2 id="home-join-title"><span data-home-copy="closerLineOne">Ready</span><br><span data-home-copy="closerLineTwo">to move?</span></h2></div>
+      <a class="button" data-i18n="preRegister" href="/contact">Pre-register</a>
     </section>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/js/supabase-config.js"></script><script src="/js/supabase.js"></script><script src="/js/main.js?v=home-v3"></script><script>initPublic();</script>
+  <script src="/js/supabase-config.js"></script><script src="/js/supabase.js"></script><script src="/js/main.js?v=art8"></script><script>initPublic();</script>
 </body>
 </html>

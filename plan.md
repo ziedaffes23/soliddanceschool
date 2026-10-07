@@ -1,42 +1,40 @@
-# Solid Dance School — secure persistence and backup
+# Solid Dance School — CY-Grotesk-inspired editorial redesign
 
 ## Implementation approach
 
-- Keep Supabase as the source of truth for the existing `site_data` JSON document.
-- Add a small Node server that serves the current static pages and exposes same-origin API routes.
-- Keep the Supabase service-role key server-only through the protected project secret; never expose it to browser JavaScript or Google Sheets.
-- Replace the browser-only SHA-256 admin gate with server-side username/password verification. Existing staging SHA-256 hashes are accepted once and upgraded to salted PBKDF2 hashes after a successful login.
-- Store admin accounts inside the protected `site_data` document under a server-only `_adminUsers` key, and never return that key through public APIs or the spreadsheet backup.
-- Public pages receive only public content. Public registrations use a dedicated API route; admin reads/writes require the signed, HttpOnly `solid_session` cookie.
-- Google Sheets is a one-way backup/reporting copy. Apps Script calls a restricted Supabase RPC that returns the complete operational dataset without `_adminUsers`, refreshes normalized tabs, and records sync status.
+- Preserve the current public routes, Supabase persistence, server-backed admin authentication, payment workflows, registration behavior, and multilingual support.
+- Add a public-only visual layer in `css/refined.css`; do not alter admin operations logic or data contracts.
+- Use the existing page templates and data-driven rendering in `js/main.js`, `js/teachers.js`, and related scripts so classes, teachers, schedules, gallery, videos, events, and contact content remain dynamic.
+- Keep the site deployable through the existing Manus server and checkpoint/publish workflow.
 
 ## Project structure
 
-- `server.js`: static serving, session cookies, Supabase REST access, public registration, admin data and admin-user APIs.
-- `Dockerfile` / `package.json`: production container runtime.
-- `js/supabase.js`: browser adapter for `/api/data`, `/api/public-registration`, and session-aware saves.
-- `js/admin.js`: server-backed admin login and admin-user CRUD UI.
-- `supabase/schema.sql`: RLS hardening and sanitized backup RPC.
-- `supabase/google-apps-script.js`: scheduled one-way Sheets backup.
-- `supabase/google-sheets-setup.md`: one-time Sheets activation instructions.
+- `index.html` and public route HTML files: semantic shells for the public experience.
+- `css/main.css`: base tokens and shared components.
+- `css/refined.css`: current responsive editorial system plus the new CY-Grotesk-inspired public layer.
+- `js/main.js`, `js/teachers.js`: public translations, Supabase-backed content rendering, filters, and interactions.
+- `js/ops.js`, `js/admin.js`, `admin/`: protected operations interface; unchanged by this redesign.
+- `server.js`: same-origin static serving and protected Supabase API.
+- `manus-routes.json`: complete public and admin route manifest.
 
-## Design and interaction decisions
+## Design decisions
 
-- **Design movement:** editorial operations desk: calm, high-contrast, and direct.
-- **Core principles:** data safety first, least-privilege exposure, reversible admin actions, and visible status.
-- **Color philosophy:** retain the Scarlet/Ink/Paper identity so security controls feel native to Solid rather than bolted on.
-- **Layout paradigm:** use the existing task-oriented admin shell; no new dashboard complexity.
-- **Signature elements:** sharp dividers, compact status labels, and the existing scarlet action buttons.
-- **Interaction philosophy:** public browsing remains frictionless; only privileged operations require a server session.
-- **Animation:** preserve existing restrained transitions; no motion is added to sensitive controls.
-- **Typography:** preserve the existing condensed editorial display face for headings and readable sans-serif body copy for forms/tables.
-- **Brand essence:** a focused dance-school operations system for staff who need fast, reliable control of students, classes, and payments; precise, energetic, trustworthy.
-- **Brand voice:** concise and operational. Examples: “Your records stay in Supabase.” and “Google Sheets is a backup copy—not the live system.”
-- **Wordmark & logo:** preserve the existing Solid mark and compact operations-desk lockup.
-- **Signature brand color:** Scarlet, used for authenticated actions and attention states.
+- **Design movement:** contemporary Swiss editorial typography crossed with the expressive, sharp-spurred grotesk character of the supplied CY GROTESK STD reference.
+- **Core principles:** oversized type as architecture, hard-edged color blocking, disciplined asymmetry, and motion-led hierarchy.
+- **Color philosophy:** preserve Solid’s Scarlet/Ink/Paper identity, but sharpen the contrast to near-black ink, warm paper, and a single high-energy scarlet signal. Red marks action, movement, and the current page rather than decorating every surface.
+- **Layout paradigm:** a poster-like vertical sequence with oversized page numbers, offset blocks, diagonal cuts, ruled metadata, and edge-to-edge hero bands instead of centered generic cards.
+- **Signature elements:** slashed scarlet bars, outlined oversized numerals, and micro-labels that read like a type specimen or studio program.
+- **Interaction philosophy:** hover states behave like a print proof being pulled forward: cards shift a few pixels, scarlet bars extend, and buttons invert sharply. Touch layouts remain single-column and scroll-safe.
+- **Animation:** use restrained reveal, translate, and line-extension transitions; respect `prefers-reduced-motion`; avoid distracting motion in forms and admin operations.
+- **Typography system:** use a heavy condensed display stack with `Bebas Neue`, `Impact`, `Arial Narrow`, and a geometric sans body stack. Display headings are uppercase, tightly tracked, and allowed to collide with the grid; metadata uses a monospace face with wide tracking.
+- **Brand essence:** a Sfax dance school for people who want disciplined practice with a fearless visual identity; kinetic, direct, exact.
+- **Brand voice:** concise, energetic, and physical. Examples: “Find your line. Break your pattern.” and “Practice with intent.”
+- **Wordmark & logo:** keep the supplied Solid Dance School mark, placing it inside a narrow scarlet registration strip or clean ink header so the logo stays recognizable while the page system carries the expressive typography.
+- **Signature brand color:** Solid Scarlet `#e52d48`, used as the single unmistakable signal color.
 
 ## Material constraints
 
-- The production server requires `SUPABASE_SERVICE_ROLE_KEY` as a protected runtime secret.
-- The SQL in `supabase/schema.sql` must be run once in the Supabase SQL Editor to remove anonymous raw reads and create the sanitized backup RPC.
-- The existing workbook remains the destination; Apps Script authorization is a one-time Google-side action.
+- The redesign must not expose the Supabase service-role key or alter the protected API.
+- Existing content, translations, public registration, and admin operations must continue working.
+- The public stylesheet must remain responsive at the existing 1100px, 900px, 700px, and mobile breakpoints.
+- The current route manifest and durable published URL remain valid.

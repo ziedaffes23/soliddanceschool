@@ -43,3 +43,10 @@ Do not break registration, Interested/Not Interested leads, students, payment tr
 ## Structural rebuild pass
 
 The follow-up brief required removing the old composition rather than recoloring it. The public shell now uses a new generated technical header with a poster-like full-screen menu, a monumental editorial footer, a from-zero homepage sequence (cover / manifesto / school statement / programme / join), and a schedule scene built from a graphic timetable rather than the legacy table. The public runtime cache key was bumped to `art8`, and the duplicate directory routes remain synchronized. Existing data attributes and backend calls were deliberately retained at the new semantic anchors.
+
+
+## Clean-sheet visual rebuild — supplied CY Grotesk reference
+
+The previous public and admin visual layers are no longer the source of truth. All routes now load `css/solid-2026.css` as the final visual system. The direction is an experimental dance-culture poster wall: black as the stage, fluorescent lime as the signal, white condensed grotesk headlines, Space Grotesk body copy, monospaced technical labels, oversized misregistered type, outlined words, skewed rules, index numbers, hand-drawn-feeling line marks, dense editorial rhythm, and high-contrast hover states.
+
+The layout paradigm is vertical publication / art-school index rather than centered card grids. The homepage is a campaign sequence (cover, manifesto, statement, programme, join); classes, teachers, events, videos, gallery, schedule and contact each have their own poster/index composition; the admin is an operations wall with a lime signal color but keeps the same functional controls. Motion is restrained to hover displacement, marquee movement, reveal timing and pointer response, with reduced-motion support. Existing Supabase-backed data hooks, registration, payments, class filters, schedule rendering, translations, RTL and admin operations are preserved.

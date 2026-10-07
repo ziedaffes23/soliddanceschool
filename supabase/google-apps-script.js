@@ -37,7 +37,11 @@ function syncNow() {
   const registrationRows = registrations.map(r => [r.id || '', studentName(r), r.birthInfo || r.dob || '', r.danceStyle || '', r.fatherName || '', r.fatherAddress || '', r.fatherPhone || '', r.fatherEmail || '', r.motherName || '', r.motherPhone || '', r.registrationDate || r.date || '', r.interestStatus || r.status || '', r.studentStatus || '', r.paymentStatus || '', packById[r.packId] || r.packId || '', r.notes || '', syncedAt]);
   const studentRows = registrations.filter(r => r.studentStatus === 'confirmed' || r.status === 'confirmed').map(r => [r.id || '', studentName(r), r.className || r.class || '', r.level || '', teacherById[r.teacherId] || r.teacher || '', r.studentStatus || r.status || '', r.registrationDate || r.date || '', r.phone || r.parentPhone || '', r.parentName || r.fatherName || r.motherName || '', syncedAt]);
   const leadRows = registrations.filter(r => r.interestStatus === 'interested' || r.status === 'Interested').map(r => [r.id || '', studentName(r), r.phone || r.fatherPhone || r.motherPhone || '', r.email || r.fatherEmail || '', r.className || r.class || '', r.interestStatus || r.status || '', r.registrationDate || r.date || '', syncedAt]);
-  const paymentRows = []; registrations.forEach(r => (r.paymentPlan && Array.isArray(r.paymentPlan.payments) ? r.paymentPlan.payments : []).forEach(p => paymentRows.push([r.id || '', studentName(r), p.date || '', Number(p.amount || 0), p.method || '', p.status || '', p.note || '', syncedAt]));
+  const paymentRows = [];
+  registrations.forEach(r => {
+    const payments = r.paymentPlan && Array.isArray(r.paymentPlan.payments) ? r.paymentPlan.payments : [];
+    payments.forEach(p => paymentRows.push([r.id || '', studentName(r), p.date || '', Number(p.amount || 0), p.method || '', p.status || '', p.note || '', syncedAt]));
+  });
   writeTab('Data JSON', [['Synced at', 'Complete sanitized Supabase JSON'], [syncedAt, JSON.stringify(data)]], false);
   writeTab('Registrations', registrationRows); writeTab('Students', studentRows); writeTab('Leads', leadRows); writeTab('Payments', paymentRows);
   writeTab('Sync Log', [[syncedAt, registrations.length, 'SUCCESS', 'Complete sanitized Supabase export']]);

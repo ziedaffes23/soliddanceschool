@@ -1,43 +1,40 @@
-# Solid Dance School — CY-Grotesk-inspired editorial rebuild
+# Solid Dance School — Complete CY Grotesk art-direction rebuild
 
-## Current direction
+## Purpose
 
-This pass is a full public-site art direction rather than another incremental CSS patch. The supplied CY GROTESK STD reference is being treated as a visual language: oversized grotesk forms, strict black/white space, modular blocks, tiny technical labels, high-contrast hierarchy, and restrained accent color. The final Solid School Dance palette is Black `#050505`, Deep Solid Green `#0B3D2E`, Electric Green `#B6FF00`, and Off-White `#F2F2ED`; red, blue, purple, orange, pink, and generic gradients are excluded.
+This is a visual architecture replacement, not a theme pass. The current public and admin interfaces are being re-authored as a brutalist editorial dance-school system grounded in the supplied CY GROTESK references.
 
-## Implementation approach
+## Design direction
 
-- Preserve the current public routes, Supabase persistence, server-backed admin authentication, payment workflows, registration behavior, and FR/EN/AR support.
-- Add `css/editorial-v2.css` as a clear public-only design system layered after the legacy stylesheet. It governs the new header, type-specimen page heroes, poster cards, schedule board, gallery, video, contact, footer, and responsive behavior.
-- Rebuild the homepage composition with a split editorial hero, manifesto cards, a live data-driven programme index, and a red call-to-action field. The dynamic class programme is rendered from the same editable website data used by the admin.
-- Keep `js/main.js` responsible for translations, Supabase-backed content, filters, registration, and the homepage programme rendering. Do not alter `js/ops.js`, `js/admin.js`, payment calculations, or protected API contracts.
-- Cache-bust the new public stylesheet on every public route and publish through the existing Manus server/checkpoint workflow.
+The website belongs to a world of **dance, street culture, fashion, music, movement, and cultural poster design**. Black `#050505`, fluorescent lime `#B6FF00`, and white `#FFFFFF` alternate as full fields; no beige, brown, pastel, blue, purple, orange, pink, or generic gradients are introduced. Lime is intentionally visible throughout the experience as a major structural color for poster sections, navigation states, borders, buttons, numbers, image treatments, and hover interactions.
 
-## Design system
+The display system uses the closest available legitimate local/web font stack to CY GROTESK (`Bebas Neue`, `Barlow Condensed`, `Space Grotesk`) with different width/weight roles: massive display faces for names and titles, mono metadata for technical labels, and readable body copy. If exact CY GROTESK files are later supplied, they can be dropped into `fonts/` and assigned without changing the layout system.
 
-- **Design movement:** contemporary Swiss type specimen crossed with the expressive, sharp-spurred grotesk character of the supplied CY GROTESK STD reference.
-- **Core principles:** oversized type as architecture, hard-edged color blocking, disciplined asymmetry, and motion-led hierarchy.
-- **Color philosophy:** Black is the dominant stage, Deep Green is the structural brand field, Off-White carries readable type, and Electric Green is a rare kinetic signal reserved for active states, hover, numbers, lines, and CTAs.
-- **Layout paradigm:** a poster-like sequence of full-width fields, split rails, index numbers, ruled metadata, and program rows instead of generic centered marketing cards.
-- **Signature elements:** red registration bars, outlined oversized numerals, diagonal/crossed micro-marks, and type-specimen labels.
-- **Interaction philosophy:** links and cards move like a printed proof being pulled forward; buttons invert sharply; the mobile menu becomes a deliberate black/red panel.
-- **Animation:** restrained reveal, translate, hover-lift, and line-extension transitions. All motion is disabled or simplified under `prefers-reduced-motion`.
-- **Typography system:** `Barlow Condensed` / `Bebas Neue` / `Arial Narrow` for display, `Inter` for readable copy, and `Space Mono` for technical labels and metadata. Headlines are uppercase, tightly tracked, and allowed to collide with the grid.
-- **Brand essence:** a Sfax dance school for people who want disciplined practice with a fearless visual identity; kinetic, direct, exact.
-- **Brand voice:** concise, physical, and confident. Example lines: “Find your line. Build your presence.” and “Your next practice is already waiting.”
-- **Wordmark & logo:** keep the supplied Solid Dance School mark, treating it like a registration stamp inside the fixed header rather than a generic navbar logo.
-- **Signature brand color:** Deep Solid Green `#0B3D2E`, with Electric Green `#B6FF00` as the controlled energy accent.
+The layout paradigm is an asymmetrical editorial index rather than a repeated centered card grid. Large type breaks containers, route heroes behave like posters, classes/events/news use flowing index rows, teachers become an artist directory with portraits and oversized names, schedule becomes a brutalist timetable, gallery becomes an irregular archive, and contact becomes a typographic registration spread. Hand-drawn-feeling marks are created with imperfect borders, rotated rules, loops, cross-outs, arrows, and technical annotations.
+
+Interaction is typographic and physical: hard rectangular buttons, lime active states, sharp hover inversions, full-screen lime/black mobile navigation, image grayscale treatment, and small motion cues. Existing intro, route transitions, filters, lightbox, calendar/My Week actions, registration, hero CMS, Supabase persistence, authentication, payment operations, translations, RTL, and accessibility hooks remain intact.
+
+## Implementation
+
+- `css/art-direction.css` is loaded after the existing public/admin styles on every route. It owns the full visual architecture while the prior styles remain as compatibility foundations.
+- Existing HTML data hooks are preserved so dynamic `main.js`, `ops.js`, `admin.js`, Supabase, payment, registration, scheduling, gallery, video, and CMS behavior do not need to be duplicated or weakened.
+- Public pages are transformed by route-scoped selectors: homepage live-poster hero; courses editorial index; teachers cast directory; schedule timetable; pricing poster; events/news cultural posters; videos archive; gallery photography archive; contact registration spread; and shared lime/black CTA fields.
+- The same art direction is applied to the admin shell with black/lime navigation, brutalist tables, oversized section titles, hard controls, and mobile-safe operations panels. Usability remains the priority for registrations, leads, students, payments, classes, schedules, teachers, events, news, videos, gallery, hero controls, settings, and admin accounts.
+- The route manifest, server runtime, Supabase credentials, Google Sheets backup bridge, and deployment contract are preserved.
 
 ## Project structure
 
-- Public HTML routes: semantic page shells and the rebuilt homepage.
-- `css/main.css`: base tokens and legacy components.
-- `css/refined.css`: existing responsive/editorial layer retained for compatibility.
-- `css/editorial-v2.css`: the new public design system.
-- `js/main.js`: translations, public data rendering, filters, registration, and homepage programme rows.
-- `js/ops.js`, `js/admin.js`, `admin/`: protected operations interface, unchanged.
-- `server.js`: same-origin static serving and protected Supabase API.
-- `manus-routes.json`: complete public and admin route manifest.
+- `index.html`, public route HTML: semantic shells and stable data hooks.
+- `css/main.css`, `css/refined.css`, `css/editorial-v2.css`: legacy compatibility and prior public foundations.
+- `css/art-direction.css`: complete new black/lime/white art-direction layer for public and admin routes.
+- `js/main.js`: public CMS rendering, translations, registration, classes, schedule, gallery, videos, hero media, pricing, and route behavior.
+- `js/ops.js`, `js/admin.js`, `admin/`: protected operations and CRUD UI.
+- `server.js`, `supabase/`: protected persistence, authentication, backup RPC and server runtime.
 
-## Constraints
+## Brand essence
 
-The redesign must not expose the Supabase service-role key, change payment allocation logic, break admin access, remove public registration, or introduce horizontal overflow on phones. It must remain deployable through the current server runtime and keep the canonical live URL stable.
+Solid is a Sfax dance school for people who want disciplined practice with a fearless point of view. It is **raw, exact, kinetic**. Voice examples: “Find your line. Build your presence.” and “Your next practice is already waiting.” The wordmark remains a registration-stamp-like mark in the fixed header; the ownable signature color is fluorescent lime.
+
+## Non-negotiables
+
+Do not break registration, Interested/Not Interested leads, students, payment tracking, installments, classes, teachers, schedules, events, news, videos, gallery, hero CMS video/image selection, Google Sheets backup, WhatsApp, pricing calculator, calendar export, French/English/Arabic RTL, authentication, SEO, accessibility, or admin account permissions. The admin must still control hero video/image, poster/mobile image, title, subtitle, CTA, active state, and publication state.

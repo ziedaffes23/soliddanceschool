@@ -2,7 +2,7 @@
 
 ## Current direction
 
-This pass is a full public-site art direction rather than another incremental CSS patch. The supplied CY GROTESK STD reference is being treated as a visual language: oversized grotesk forms, strict black/white space, modular blocks, tiny technical labels, high-contrast hierarchy, and restrained accent color. The existing Solid Scarlet / Ink / Paper palette remains the brand layer.
+This pass is a full public-site art direction rather than another incremental CSS patch. The supplied CY GROTESK STD reference is being treated as a visual language: oversized grotesk forms, strict black/white space, modular blocks, tiny technical labels, high-contrast hierarchy, and restrained accent color. The final Solid School Dance palette is Black `#050505`, Deep Solid Green `#0B3D2E`, Electric Green `#B6FF00`, and Off-White `#F2F2ED`; red, blue, purple, orange, pink, and generic gradients are excluded.
 
 ## Implementation approach
 
@@ -16,7 +16,7 @@ This pass is a full public-site art direction rather than another incremental CS
 
 - **Design movement:** contemporary Swiss type specimen crossed with the expressive, sharp-spurred grotesk character of the supplied CY GROTESK STD reference.
 - **Core principles:** oversized type as architecture, hard-edged color blocking, disciplined asymmetry, and motion-led hierarchy.
-- **Color philosophy:** near-black Ink creates the stage, warm Paper creates the editorial field, and Solid Scarlet marks action, movement, and the current path.
+- **Color philosophy:** Black is the dominant stage, Deep Green is the structural brand field, Off-White carries readable type, and Electric Green is a rare kinetic signal reserved for active states, hover, numbers, lines, and CTAs.
 - **Layout paradigm:** a poster-like sequence of full-width fields, split rails, index numbers, ruled metadata, and program rows instead of generic centered marketing cards.
 - **Signature elements:** red registration bars, outlined oversized numerals, diagonal/crossed micro-marks, and type-specimen labels.
 - **Interaction philosophy:** links and cards move like a printed proof being pulled forward; buttons invert sharply; the mobile menu becomes a deliberate black/red panel.
@@ -25,7 +25,7 @@ This pass is a full public-site art direction rather than another incremental CS
 - **Brand essence:** a Sfax dance school for people who want disciplined practice with a fearless visual identity; kinetic, direct, exact.
 - **Brand voice:** concise, physical, and confident. Example lines: “Find your line. Build your presence.” and “Your next practice is already waiting.”
 - **Wordmark & logo:** keep the supplied Solid Dance School mark, treating it like a registration stamp inside the fixed header rather than a generic navbar logo.
-- **Signature brand color:** Solid Scarlet `#e52d48`.
+- **Signature brand color:** Deep Solid Green `#0B3D2E`, with Electric Green `#B6FF00` as the controlled energy accent.
 
 ## Project structure
 

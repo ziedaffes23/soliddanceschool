@@ -1,37 +1,15 @@
 # Solid Dance School: Supabase → Google Sheets backup
 
-## Spreadsheet
+The existing workbook is the destination for this backup:
 
-[Solid Dance School — Supabase Backup](https://docs.google.com/spreadsheets/d/1nH5vZ2LCX_NXj556VkO-tSeXPpg8FsPEtvklMzSHN3s/edit)
+<https://docs.google.com/spreadsheets/d/1nH5vZ2LCX_NXj556VkO-tSeXPpg8FsPEtvklMzSHN3s/edit>
 
-The workbook contains these tabs:
+## One-time Supabase step
 
-- Registrations
-- Students
-- Leads
-- Payments
-- Sync Log
+Open the Supabase project, go to **SQL Editor**, and run [`schema.sql`](./schema.sql). It keeps Supabase as the source of truth, removes anonymous raw reads of student/payment data, and creates the sanitized `export_site_backup()` RPC. Do not put the service-role key into Apps Script.
 
-## One-time activation
+## One-time Google Sheets step
 
-1. Open the spreadsheet.
-2. Select **Extensions → Apps Script**.
-3. Open [`google-apps-script.js`](./google-apps-script.js) from this repository and copy its contents into `Code.gs`.
-4. Replace `PASTE_THE_PUBLIC_ANON_KEY_HERE` with the Supabase **anon/public** key from `js/supabase-config.js`.
-5. Click **Save**.
-6. Run the function **`installTrigger`** once.
-7. Accept Google's authorization prompts.
-8. Return to the spreadsheet and refresh it.
+Open the workbook, choose **Extensions → Apps Script**, replace `Code.gs` with [`google-apps-script.js`](./google-apps-script.js), and replace only `PASTE_THE_PUBLIC_ANON_KEY_HERE` with the browser-safe anon/public key from `js/supabase-config.js`. Save the project, run **installTrigger**, review Google's authorization prompts, and choose **Allow**. The script creates any missing tabs and syncs immediately, then repeats every 15 minutes.
 
-The script will then:
-
-- Read the `default` record from Supabase's `site_data` table.
-- Refresh the Registrations, Students, Leads, and Payments tabs.
-- Write a timestamp and result to Sync Log.
-- Repeat automatically every 15 minutes.
-
-Supabase remains the source of truth. Google Sheets is a one-way backup/reporting copy and does not write changes back to the website.
-
-## Security
-
-The sheet contains personal information from registration forms. Share the spreadsheet only with authorized school staff. Do not use a Supabase `service_role` key in Apps Script; use only the public anon key.
+The workbook contains or creates `Data JSON`, `Registrations`, `Students`, `Leads`, `Payments`, and `Sync Log`. `Data JSON` contains the complete sanitized operational backup; admin password hashes are excluded. Google Sheets is one-way backup/reporting and never writes changes back to the website.

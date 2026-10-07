@@ -1,40 +1,36 @@
-/* Solid Dance School cloud persistence.
-   The app remains usable offline through localStorage and syncs the same solidData
-   document to Supabase when the public site_data table is configured. */
+/* Solid Dance School server-backed persistence.
+   The browser never receives the Supabase service-role key. Public pages use a
+   filtered data response; authenticated admin pages use the protected API. */
 (function(){
-  const cfg=window.SOLID_SUPABASE_CONFIG||{};
-  const ready=!!(window.supabase&&cfg.url&&cfg.anonKey);
-  const client=ready?window.supabase.createClient(cfg.url,cfg.anonKey):null;
-  let restoring=false;
   const json=v=>JSON.stringify(v);
   function localData(){try{return JSON.parse(localStorage.getItem('solidData')||'null')}catch{return null}}
+  async function api(path, options={}){
+    const response=await fetch(path,{credentials:'include',headers:{'content-type':'application/json',...(options.headers||{})},...options});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.error||`Request failed (${response.status})`);
+    return data;
+  }
   async function restore(){
-    if(!client||restoring)return;
-    restoring=true;
+    if(document.body.dataset.admin==='login')return;
     try{
-      const {data,error}=await client.from('site_data').select('data').eq('id','default').maybeSingle();
-      if(error)throw error;
-      if(data&&data.data){
+      const scope=document.body.dataset.admin?'?scope=admin':'';
+      const result=await api(`/api/data${scope}`);
+      if(result.data){
         const current=localData();
-        if(json(current)!==json(data.data)){
-          localStorage.setItem('solidData',json(data.data));
+        if(json(current)!==json(result.data)){
+          localStorage.setItem('solidData',json(result.data));
           if(document.readyState!=='loading')location.reload();
         }
-      }else{
-        const current=localData();
-        if(current)await client.from('site_data').upsert({id:'default',data:current,updated_at:new Date().toISOString()});
       }
-    }catch(err){console.warn('[Supabase] restore skipped:',err.message||err)}
-    finally{restoring=false}
+    }catch(err){console.warn('[Solid API] restore skipped:',err.message||err)}
   }
   async function save(data){
     localStorage.setItem('solidData',json(data));
-    if(!client)return;
-    try{
-      const {error}=await client.from('site_data').upsert({id:'default',data,updated_at:new Date().toISOString()});
-      if(error)throw error;
-    }catch(err){console.warn('[Supabase] cloud save skipped:',err.message||err)}
+    try{return await api('/api/data',{method:'PUT',body:JSON.stringify({data})})}
+    catch(err){console.warn('[Solid API] save skipped:',err.message||err);return {ok:false,error:err.message}}
   }
-  window.solidCloud={enabled:!!client,restore,save,client};
-  if(client)window.addEventListener('load',()=>setTimeout(restore,120));
+  async function savePublicRegistration(entry){return api('/api/public-registration',{method:'POST',body:JSON.stringify({entry})})}
+  async function session(){return api('/api/session')}
+  window.solidCloud={enabled:true,restore,save,savePublicRegistration,session,api};
+  window.addEventListener('load',()=>setTimeout(restore,120));
 })();

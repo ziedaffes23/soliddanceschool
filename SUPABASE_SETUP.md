@@ -1,27 +1,19 @@
-# Supabase setup
+# Solid Dance School production setup
 
-The website is configured for the Supabase project supplied for Solid Dance School.
+The website now uses a protected Node server with Supabase as its source of truth. The browser never receives the Supabase `service_role` key.
 
-## One-time setup
+## One-time Supabase SQL
 
-1. Open the Supabase dashboard for the project.
-2. Open **SQL Editor**.
-3. Run [`supabase/schema.sql`](supabase/schema.sql).
-4. Confirm the `public.site_data` table exists.
+Open the Supabase project, go to **SQL Editor**, and run [`supabase/schema.sql`](supabase/schema.sql). This keeps `site_data` private from anonymous table reads and creates the sanitized `export_site_backup()` RPC used by Google Sheets.
 
-The static client uses the browser-safe `anon` key in `js/supabase-config.js`; never replace it with a `service_role` key.
+## Runtime secret
 
-## How synchronization works
+The project secret `SUPABASE_SERVICE_ROLE_KEY` is stored through Manus protected configuration. Never commit it, place it in `js/`, or paste it into Google Apps Script.
 
-- The existing browser `localStorage` behavior remains as an offline fallback.
-- On page load, the app restores the shared `solidData` document from Supabase when available.
-- Admin saves write locally immediately and then upsert the same document to Supabase.
-- The database row is `site_data.id = 'default'`.
+## Accounts
 
-## Deploying on another server
+The server migrates the existing `admin` and `manager` staging hashes on the first successful login and upgrades them to salted PBKDF2 hashes. The admin can add, edit, and remove accounts from **Settings → Admin users**. The manager remains limited to operational sections. Passwords are never returned to the browser or sheet backup.
 
-The repository contains the client configuration, schema, and `.env.example`, so no source edit is required for the same Supabase project. If a host injects environment variables during a build, use `SUPABASE_URL` and `SUPABASE_ANON_KEY` and generate the equivalent `window.SOLID_SUPABASE_CONFIG` object.
+## Google Sheets backup
 
-## Security note
-
-This is a static site with a browser-only admin login. The included SQL policies permit the anon browser client to read and write the single JSON document so the current admin experience can synchronize. That is not suitable for protecting personal registration data against a determined visitor. Before using this for sensitive production data, add Supabase Auth and replace the anon write/read policies with authenticated, role-based policies or move writes behind an Edge Function.
+Follow [`supabase/google-sheets-setup.md`](supabase/google-sheets-setup.md). Apps Script calls the sanitized RPC every 15 minutes and refreshes the complete operational backup tabs. Supabase remains the only writeable source of truth.

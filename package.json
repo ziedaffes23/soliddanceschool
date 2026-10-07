@@ -1,0 +1,12 @@
+{
+  "name": "solid-dance-school",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Solid Dance School website and operations server",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

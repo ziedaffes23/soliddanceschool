@@ -1,40 +1,43 @@
-# Solid Dance School — CY-Grotesk-inspired editorial redesign
+# Solid Dance School — CY-Grotesk-inspired editorial rebuild
+
+## Current direction
+
+This pass is a full public-site art direction rather than another incremental CSS patch. The supplied CY GROTESK STD reference is being treated as a visual language: oversized grotesk forms, strict black/white space, modular blocks, tiny technical labels, high-contrast hierarchy, and restrained accent color. The existing Solid Scarlet / Ink / Paper palette remains the brand layer.
 
 ## Implementation approach
 
-- Preserve the current public routes, Supabase persistence, server-backed admin authentication, payment workflows, registration behavior, and multilingual support.
-- Add a public-only visual layer in `css/refined.css`; do not alter admin operations logic or data contracts.
-- Use the existing page templates and data-driven rendering in `js/main.js`, `js/teachers.js`, and related scripts so classes, teachers, schedules, gallery, videos, events, and contact content remain dynamic.
-- Keep the site deployable through the existing Manus server and checkpoint/publish workflow.
+- Preserve the current public routes, Supabase persistence, server-backed admin authentication, payment workflows, registration behavior, and FR/EN/AR support.
+- Add `css/editorial-v2.css` as a clear public-only design system layered after the legacy stylesheet. It governs the new header, type-specimen page heroes, poster cards, schedule board, gallery, video, contact, footer, and responsive behavior.
+- Rebuild the homepage composition with a split editorial hero, manifesto cards, a live data-driven programme index, and a red call-to-action field. The dynamic class programme is rendered from the same editable website data used by the admin.
+- Keep `js/main.js` responsible for translations, Supabase-backed content, filters, registration, and the homepage programme rendering. Do not alter `js/ops.js`, `js/admin.js`, payment calculations, or protected API contracts.
+- Cache-bust the new public stylesheet on every public route and publish through the existing Manus server/checkpoint workflow.
+
+## Design system
+
+- **Design movement:** contemporary Swiss type specimen crossed with the expressive, sharp-spurred grotesk character of the supplied CY GROTESK STD reference.
+- **Core principles:** oversized type as architecture, hard-edged color blocking, disciplined asymmetry, and motion-led hierarchy.
+- **Color philosophy:** near-black Ink creates the stage, warm Paper creates the editorial field, and Solid Scarlet marks action, movement, and the current path.
+- **Layout paradigm:** a poster-like sequence of full-width fields, split rails, index numbers, ruled metadata, and program rows instead of generic centered marketing cards.
+- **Signature elements:** red registration bars, outlined oversized numerals, diagonal/crossed micro-marks, and type-specimen labels.
+- **Interaction philosophy:** links and cards move like a printed proof being pulled forward; buttons invert sharply; the mobile menu becomes a deliberate black/red panel.
+- **Animation:** restrained reveal, translate, hover-lift, and line-extension transitions. All motion is disabled or simplified under `prefers-reduced-motion`.
+- **Typography system:** `Barlow Condensed` / `Bebas Neue` / `Arial Narrow` for display, `Inter` for readable copy, and `Space Mono` for technical labels and metadata. Headlines are uppercase, tightly tracked, and allowed to collide with the grid.
+- **Brand essence:** a Sfax dance school for people who want disciplined practice with a fearless visual identity; kinetic, direct, exact.
+- **Brand voice:** concise, physical, and confident. Example lines: “Find your line. Build your presence.” and “Your next practice is already waiting.”
+- **Wordmark & logo:** keep the supplied Solid Dance School mark, treating it like a registration stamp inside the fixed header rather than a generic navbar logo.
+- **Signature brand color:** Solid Scarlet `#e52d48`.
 
 ## Project structure
 
-- `index.html` and public route HTML files: semantic shells for the public experience.
-- `css/main.css`: base tokens and shared components.
-- `css/refined.css`: current responsive editorial system plus the new CY-Grotesk-inspired public layer.
-- `js/main.js`, `js/teachers.js`: public translations, Supabase-backed content rendering, filters, and interactions.
-- `js/ops.js`, `js/admin.js`, `admin/`: protected operations interface; unchanged by this redesign.
+- Public HTML routes: semantic page shells and the rebuilt homepage.
+- `css/main.css`: base tokens and legacy components.
+- `css/refined.css`: existing responsive/editorial layer retained for compatibility.
+- `css/editorial-v2.css`: the new public design system.
+- `js/main.js`: translations, public data rendering, filters, registration, and homepage programme rows.
+- `js/ops.js`, `js/admin.js`, `admin/`: protected operations interface, unchanged.
 - `server.js`: same-origin static serving and protected Supabase API.
 - `manus-routes.json`: complete public and admin route manifest.
 
-## Design decisions
+## Constraints
 
-- **Design movement:** contemporary Swiss editorial typography crossed with the expressive, sharp-spurred grotesk character of the supplied CY GROTESK STD reference.
-- **Core principles:** oversized type as architecture, hard-edged color blocking, disciplined asymmetry, and motion-led hierarchy.
-- **Color philosophy:** preserve Solid’s Scarlet/Ink/Paper identity, but sharpen the contrast to near-black ink, warm paper, and a single high-energy scarlet signal. Red marks action, movement, and the current page rather than decorating every surface.
-- **Layout paradigm:** a poster-like vertical sequence with oversized page numbers, offset blocks, diagonal cuts, ruled metadata, and edge-to-edge hero bands instead of centered generic cards.
-- **Signature elements:** slashed scarlet bars, outlined oversized numerals, and micro-labels that read like a type specimen or studio program.
-- **Interaction philosophy:** hover states behave like a print proof being pulled forward: cards shift a few pixels, scarlet bars extend, and buttons invert sharply. Touch layouts remain single-column and scroll-safe.
-- **Animation:** use restrained reveal, translate, and line-extension transitions; respect `prefers-reduced-motion`; avoid distracting motion in forms and admin operations.
-- **Typography system:** use a heavy condensed display stack with `Bebas Neue`, `Impact`, `Arial Narrow`, and a geometric sans body stack. Display headings are uppercase, tightly tracked, and allowed to collide with the grid; metadata uses a monospace face with wide tracking.
-- **Brand essence:** a Sfax dance school for people who want disciplined practice with a fearless visual identity; kinetic, direct, exact.
-- **Brand voice:** concise, energetic, and physical. Examples: “Find your line. Break your pattern.” and “Practice with intent.”
-- **Wordmark & logo:** keep the supplied Solid Dance School mark, placing it inside a narrow scarlet registration strip or clean ink header so the logo stays recognizable while the page system carries the expressive typography.
-- **Signature brand color:** Solid Scarlet `#e52d48`, used as the single unmistakable signal color.
-
-## Material constraints
-
-- The redesign must not expose the Supabase service-role key or alter the protected API.
-- Existing content, translations, public registration, and admin operations must continue working.
-- The public stylesheet must remain responsive at the existing 1100px, 900px, 700px, and mobile breakpoints.
-- The current route manifest and durable published URL remain valid.
+The redesign must not expose the Supabase service-role key, change payment allocation logic, break admin access, remove public registration, or introduce horizontal overflow on phones. It must remain deployable through the current server runtime and keep the canonical live URL stable.

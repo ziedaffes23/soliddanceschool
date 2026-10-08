@@ -296,13 +296,11 @@
   const cultureBar=qs('[data-culture-progress]');
   function updateCulture(){
     if(!culture||!cultureTrack)return;
-    const r=culture.getBoundingClientRect();
-    const total=r.height-innerHeight;
-    if(total<=0)return;
-    const p=Math.min(1,Math.max(0,-r.top/total));
-    const dist=cultureTrack.scrollWidth-innerWidth;
-    if(dist>0)cultureTrack.style.transform='translate3d('+(-p*dist)+'px,0,0)';
+    const max=Math.max(1,cultureTrack.scrollWidth-cultureTrack.clientWidth);
+    const p=Math.min(1,Math.max(0,cultureTrack.scrollLeft/max));
+    cultureTrack.style.transform='none';
     if(cultureBar)cultureBar.style.transform='scaleX('+p+')';
+    culture.classList.toggle('community-active',p>0.01);
   }
 
   const heroMedia=qs('.hero-only .hero-media');
@@ -325,6 +323,7 @@
   }
   window.addEventListener('scroll',onScroll,{passive:true});
   window.addEventListener('resize',onScroll,{passive:true});
+  cultureTrack?.addEventListener('scroll',updateCulture,{passive:true});
 
   /* ---------- 11. Floating style preview for programme rows ---------- */
   const progList=qs('[data-home-program]');

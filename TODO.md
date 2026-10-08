@@ -1,9 +1,7 @@
-# Clean-sheet redesign outcomes
+# Uploaded design implementation outcomes
 
-- Replace the previous public visual stack with one source of truth: `css/solid-2026.css`, inspired by the supplied CY Grotesk reference with near-black stage, fluorescent lime signal, white condensed display type, technical mono labels, oversized misregistered type, outlined words, slashed rules, linework, and editorial poster rhythm.
-- Rebuild the public composition across Home, Classes, Teachers, Schedule, Events, News, Videos, Gallery, Studio, and Contact so each route has a distinct poster/index scene rather than the previous generic card-grid styling.
-- Rebuild the shared header, navigation overlay, footer, homepage campaign sequence, and schedule scene while keeping existing route links and data hooks functional.
-- Preserve FR/EN/AR switching, Arabic RTL, age filtering on Classes, Supabase-backed dynamic content, gallery image URLs, video embeds, public registration, navigation, payment/admin integrations, and all current content management behavior.
-- Keep the design responsive and scroll-safe at desktop and mobile breakpoints with accessible controls, usable touch targets, and reduced-motion support.
-- Apply the same visual language to the admin entry and operations dashboard without changing protected login/session, Supabase API, payment, registration, or account-management contracts.
-- Checkpoint the redesign to the canonical Manus repository, push the latest source to GitHub, publish it, and provide the verified live URL.
+- Apply the supplied `index(7).html` visual language across all public routes: Archivo/CY-Grotesk-like display typography, black/moss/acid/paper palette, grid wash, editorial spacing, outlined type, ruled metadata, and asymmetrical movement-focused composition.
+- Add the uploaded interaction systems to the public website: animated grain, lime page curtain transitions, custom cursor on pointer devices, magnetic buttons, parallax media, scroll-triggered word and section reveals, ticker motion, hover image treatment, tilt response, and reduced-motion fallbacks.
+- Preserve current Solid functionality: FR/EN/AR switching, RTL support, Supabase-backed public content, age-based class filtering, gallery image URLs, video embeds, registration, schedule/pricing, navigation, and admin/server contracts.
+- Load the new CSS and motion runtime consistently across root and nested public routes without applying public cursor or curtain effects to the admin dashboard.
+- Validate local preview, JavaScript syntax, route coverage, mobile-safe fallbacks, checkpoint the changes, synchronize GitHub, publish, and verify the live URL.

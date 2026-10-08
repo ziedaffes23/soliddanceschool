@@ -422,4 +422,41 @@
       });
     }).observe(progList,{childList:true});
   }
+  /* ---------- v3. Logo + page choreography ---------- */
+  function initLogo(){
+    const logo=qs('.site-header .site-logo');
+    if(!logo)return;
+    logo.alt='Solid School Dance — Sfax';
+    const frame=logo.closest('.logo');
+    if(frame&&!frame.dataset.logoBound){
+      frame.dataset.logoBound='1';
+      frame.addEventListener('pointerenter',()=>frame.classList.add('logo-active'));
+      frame.addEventListener('pointerleave',()=>frame.classList.remove('logo-active'));
+    }
+  }
+  function initScrollRail(){
+    const rail=add('div','uploaded-progress');
+    const scan=add('div','uploaded-scanline');
+    rail.setAttribute('aria-hidden','true');scan.setAttribute('aria-hidden','true');
+    const update=()=>{
+      const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);
+      rail.style.transform='scaleX('+Math.min(1,Math.max(0,scrollY/max))+')';
+    };
+    window.addEventListener('scroll',update,{passive:true});update();
+  }
+  function initMagnetic(){
+    if(!fine)return;
+    qsa('[data-magnetic],.hero-actions .button,.page-cta .button').forEach(el=>{
+      if(el.dataset.magneticBound)return;el.dataset.magneticBound='1';
+      el.addEventListener('pointermove',e=>{
+        const r=el.getBoundingClientRect(),x=(e.clientX-(r.left+r.width/2))*.08,y=(e.clientY-(r.top+r.height/2))*.08;
+        el.style.transform='translate3d('+x+'px,'+y+'px,0)';
+      });
+      el.addEventListener('pointerleave',()=>{el.style.transform=''});
+    });
+  }
+  initLogo();
+  initScrollRail();
+  initMagnetic();
+
 })();

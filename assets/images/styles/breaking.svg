@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  <defs>
+    <radialGradient id="grad" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#112610" />
+      <stop offset="100%" stop-color="#050505" />
+    </radialGradient>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#b6ff00" stroke-width="0.6" opacity="0.15"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grad)" />
+  <rect width="100%" height="100%" fill="url(#grid)" />
+  <g fill="none" stroke="#b6ff00" stroke-width="1.5" opacity="0.4">
+    <circle cx="400" cy="500" r="256" stroke-dasharray="4,8" />
+    <line x1="80" y1="100" x2="720" y2="900" stroke-dasharray="2,6" />
+  </g>
+  <text x="50%" y="48%" font-family="'Archivo', 'Helvetica Neue', Arial, sans-serif" font-size="64" font-weight="900" fill="#f2f2ee" letter-spacing="-0.05em" text-anchor="middle" text-transform="uppercase">
+    BREAKING
+  </text>
+  <text x="50%" y="55%" font-family="'Archivo', 'Helvetica Neue', Arial, sans-serif" font-size="28.000000000000004" font-weight="700" fill="#b6ff00" letter-spacing="0.15em" text-anchor="middle" text-transform="uppercase">
+    SOLID / STYLE 03
+  </text>
+</svg>

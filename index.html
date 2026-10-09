@@ -2143,6 +2143,9 @@
         const raw = localStorage.getItem('solidData');
         if (raw) {
           const parsed = JSON.parse(raw);
+          if (parsed.hero) {
+            CONFIG.hero = parsed.hero;
+          }
           if (parsed.teachers && Array.isArray(parsed.teachers) && parsed.teachers.length) {
             CONFIG.teachers = parsed.teachers.map(t => ({
               name: t.name || 'TEACHER',
@@ -2163,8 +2166,47 @@
       }
     })();
 
+    function applyHeroCMS() {
+      if (!CONFIG.hero) return;
+      const h = CONFIG.hero;
+      const visualWrap = document.querySelector('.hero-visual');
+      if (visualWrap) {
+        if (h.type === 'video' && h.videoUrl) {
+          const raw = String(h.videoUrl).trim();
+          const yt = raw.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^?&/]+)/i);
+          const vm = raw.match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+          if (yt) {
+            visualWrap.innerHTML = `<iframe style="width:100%;height:100%;border:0;filter:grayscale(1) contrast(1.35) brightness(0.9);" src="https://www.youtube.com/embed/${encodeURIComponent(yt[1])}?autoplay=1&mute=1&loop=1&playlist=${encodeURIComponent(yt[1])}&controls=0" title="Hero video" allow="autoplay" allowfullscreen></iframe>`;
+          } else if (vm) {
+            visualWrap.innerHTML = `<iframe style="width:100%;height:100%;border:0;filter:grayscale(1) contrast(1.35) brightness(0.9);" src="https://player.vimeo.com/video/${encodeURIComponent(vm[1])}?autoplay=1&muted=1&loop=1&background=1" title="Hero video" allow="autoplay" allowfullscreen></iframe>`;
+          } else {
+            visualWrap.innerHTML = `<figure class="img-frame" style="height:100%;"><video autoplay muted loop playsinline poster="${h.posterUrl || ''}" src="${raw}" style="width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.35) brightness(0.9);"></video></figure>`;
+          }
+        } else if (h.imageUrl) {
+          visualWrap.innerHTML = `<figure class="img-frame" style="height:100%;"><img src="${h.imageUrl}" alt="Solid hero movement" style="width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.35) brightness(0.9);"></figure>`;
+        }
+      }
+      if (Array.isArray(h.headline) && h.headline.length >= 3) {
+        const lines = document.querySelectorAll('.hero-line');
+        if (lines[0]) lines[0].textContent = h.headline[0];
+        if (lines[1]) lines[1].textContent = h.headline[1];
+        if (lines[2]) lines[2].textContent = h.headline[2];
+      }
+      if (h.ctaText) {
+        const ctaBtn = document.querySelector('.hero-sub-block .btn .btn-text');
+        if (ctaBtn) ctaBtn.innerHTML = `${h.ctaText} <span class="btn-arrow">→</span>`;
+      }
+      if (h.ctaUrl) {
+        const ctaAnchor = document.querySelector('.hero-sub-block .btn');
+        if (ctaAnchor) ctaAnchor.href = h.ctaUrl;
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+      // Hero CMS apply
+      applyHeroCMS();
 
       // 1. RENDER CONTACT META (Hide empty fields automatically)
       renderContactMeta();

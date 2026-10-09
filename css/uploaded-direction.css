@@ -1,6 +1,20 @@
 /* SOLID SCHOOL DANCE — uploaded direction
    Acid/black editorial system adapted to the existing CMS and operations app. */
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap');
+@font-face {
+  font-family: 'CY Grotesk STD';
+  src: url('/assets/fonts/CYGroteskSTD-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'CY Grotesk STD';
+  src: url('/assets/fonts/CYGroteskSTD-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Space+Mono:wght@400;700&display=swap');
 
 :root{
   --u-ink:#050505;
@@ -13,16 +27,16 @@
   --u-soft:rgba(242,242,238,.12);
   --u-mute:rgba(242,242,238,.62);
   --u-danger:#ff6d38;
-  --u-font:'Archivo','Helvetica Neue',Arial,sans-serif;
+  --u-font:'CY Grotesk STD','Archivo','Helvetica Neue',Arial,sans-serif;
   --u-margin:clamp(16px,3vw,44px);
   --u-gutter:clamp(10px,1.4vw,20px);
   --u-ease:cubic-bezier(.2,.8,.1,1);
   --u-io:cubic-bezier(.7,0,.2,1);
   --u-nav:64px;
   /* Retune legacy shorthand fonts to the uploaded direction */
-  --s-display:'Archivo','Helvetica Neue',Arial,sans-serif;
-  --s-body:'Archivo','Helvetica Neue',Arial,sans-serif;
-  --s-mono:'Archivo','Helvetica Neue',Arial,sans-serif;
+  --s-display:'CY Grotesk STD','Archivo','Helvetica Neue',Arial,sans-serif;
+  --s-body:'CY Grotesk STD','Archivo','Helvetica Neue',Arial,sans-serif;
+  --s-mono:'Space Mono','Archivo',monospace;
 }
 
 /* Expanded grotesk for every display element (beats legacy font shorthands) */

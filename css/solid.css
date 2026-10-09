@@ -60,9 +60,9 @@ p{margin:0}
 
 /* ---------- header ---------- */
 .site-header{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:0 var(--gutter);height:var(--header-h);background:rgba(10,10,10,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--panel-line);transition:background .2s ease}
-.site-header .logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:900;font-size:18px;letter-spacing:.02em;flex:0 0 auto}
-.site-header .logo .mark{width:30px;height:30px;background:var(--lime);display:grid;place-items:center;color:var(--black);font-weight:900;border-radius:1px}
-.site-header .logo small{display:block;font-family:var(--font-mono);font-weight:400;font-size:10px;letter-spacing:.14em;color:var(--grey);text-transform:uppercase}
+.site-header .logo,.mobile-nav-top .logo{display:flex;align-items:center;flex:0 0 auto}
+.site-header .logo img{height:34px;width:auto;display:block}
+.mobile-nav-top .logo img{height:26px;width:auto;display:block}
 .nav{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
 .nav a{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--paper-dim);padding:6px 2px;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
 .nav a:hover,.nav a.active{color:var(--lime);border-color:var(--lime)}

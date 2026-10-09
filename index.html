@@ -11,7 +11,7 @@
   <meta property="og:description" content="Move different with Solid Dance School.">
   <meta property="og:type" content="website">
   <link rel="icon" href="/assets/solid-dance-school-logo.png">
-  <link rel="stylesheet" href="/css/solid.css?v=solid4">
+  <link rel="stylesheet" href="/css/solid.css?v=solid6">
 </head>
 <body data-page="home">
   <div class="page-curtain" aria-hidden="true"><span>SOLID</span></div>
@@ -42,7 +42,7 @@
     <section class="section" aria-labelledby="manifest-title">
       <div class="section-head"><span class="section-kicker">What we do</span><span class="section-kicker">Solid / Practice</span></div>
       <div class="eyebrow" data-home-copy="manifestKicker">Solid / Practice</div>
-      <h2 id="manifest-title" class="section-title" data-home-copy="manifestTitle">A BODY<br>OF WORK.</h2>
+      <h2 id="manifest-title" class="section-title" data-scroll-words data-home-copy="manifestTitle">A BODY<br>OF WORK.</h2>
       <p style="max-width:56ch;color:var(--paper-dim);margin-top:18px" data-home-copy="manifestCopy">A studio for bodies, rhythm and fearless expression. Find your line, build your presence, and move with intent.</p>
       <div class="manifest-grid">
         <a class="manifest-card" href="/cours"><span class="n">01 / Practice</span><h3 data-home-copy="practiceTitle">Practice</h3><p data-home-copy="practiceCopy">Contemporary, hip hop and movement classes shaped around the person in front of us.</p><span class="arrow">↗</span></a>
@@ -54,7 +54,7 @@
     <section class="section" aria-labelledby="program-title">
       <div class="section-head"><span class="section-kicker">Dance styles</span><span class="section-kicker">Choose your floor</span></div>
       <div class="eyebrow" data-home-copy="programKicker">Solid / Programme</div>
-      <h2 id="program-title" class="section-title" data-home-copy="programTitle">The<br>programme.</h2>
+      <h2 id="program-title" class="section-title" data-scroll-words data-home-copy="programTitle">The<br>programme.</h2>
       <div class="index-grid" data-home-program style="margin-top:30px"></div>
     </section>
 
@@ -62,7 +62,7 @@
       <div class="section-head"><span class="section-kicker">The school</span><span class="section-kicker">Since day one</span></div>
       <div class="school-grid">
         <div class="copy">
-          <h2 id="school-title">BUILT<br>ON THE FLOOR.</h2>
+          <h2 id="school-title" data-scroll-words>BUILT<br>ON THE FLOOR.</h2>
           <p data-studio-copy>Solid Dance School is a place for practice, connection and performance. Visit us in Sfax and find your rhythm.</p>
           <div class="stats">
             <div class="stat"><strong data-count="8">0</strong><span>Dance styles under one roof</span></div>
@@ -76,21 +76,22 @@
 
     <section class="section" aria-labelledby="teachers-title">
       <div class="section-head"><span class="section-kicker">Teachers</span><span class="section-kicker">Working dancers</span></div>
-      <h2 id="teachers-title" class="section-title">WHO TEACHES YOU</h2>
+      <h2 id="teachers-title" class="section-title" data-scroll-words>WHO TEACHES YOU</h2>
       <div class="teacher-rail" data-home-teachers style="margin-top:30px"></div>
     </section>
 
     <section class="section" aria-labelledby="schedule-title">
       <div class="section-head"><span class="section-kicker">Schedule</span><span class="section-kicker">Weekly timetable</span></div>
-      <h2 id="schedule-title" class="section-title">FIND YOUR RHYTHM.</h2>
+      <h2 id="schedule-title" class="section-title" data-scroll-words>FIND YOUR RHYTHM.</h2>
       <div data-schedule-board><div class="notice">Schedule coming soon.</div></div>
       <div style="margin-top:24px"><a class="button ghost" href="/horaires-tarifs">Full schedule &amp; pricing →</a></div>
     </section>
 
-    <section class="section" aria-label="Community and culture">
-      <div class="section-head"><span class="section-kicker">Community</span><span class="section-kicker">Scroll →</span></div>
+    <section class="culture-pin" aria-label="Community and culture" data-culture-pin>
+      <div class="culture-sticky" data-culture-sticky>
+      <div class="culture-head"><div class="section-head"><span class="section-kicker">Community</span><span class="section-kicker">Scroll →</span></div></div>
       <div class="culture-track" data-culture-track>
-        <h2 class="culture-statement">NOT A CLASS. <span>A CREW.</span></h2>
+        <h2 class="culture-statement" data-scroll-words>NOT A CLASS. <span>A CREW.</span></h2>
         <figure class="culture-card" data-ph="Cypher"></figure>
         <p class="culture-quote">Everyone starts somewhere. Most of us started in the back row.<small>The studio rule</small></p>
         <figure class="culture-card wide" data-ph="Battle night"></figure>
@@ -100,7 +101,8 @@
         <figure class="culture-card sq" data-ph="Old heads teaching"></figure>
         <figure class="culture-card wide" data-ph="Empty studio, 2am"></figure>
       </div>
-      <div class="progress" style="margin-top:6px"><span data-culture-progress style="display:block;height:100%;background:var(--lime)"></span></div>
+      <div class="culture-head"><div class="progress culture-progress"><span data-culture-progress></span></div></div>
+      </div>
     </section>
 
     <section class="section" aria-labelledby="event-title">
@@ -117,15 +119,15 @@
     </section>
 
     <section class="page-cta">
-      <div><span class="section-kicker">Solid / Next step</span><h2>READY TO MOVE?</h2></div>
+      <div><span class="section-kicker">Solid / Next step</span><h2 data-scroll-words>READY TO MOVE?</h2></div>
       <a class="button invert" data-i18n="preRegister" href="/contact">Pre-register</a>
     </section>
   </main>
 
   <script src="/js/supabase-config.js"></script>
   <script src="/js/supabase.js"></script>
-  <script src="/js/main.js?v=solid4"></script>
+  <script src="/js/main.js?v=solid6"></script>
   <script>initPublic();</script>
-  <script src="/js/motion.js?v=solid4"></script>
+  <script src="/js/motion.js?v=solid6"></script>
 </body>
 </html>

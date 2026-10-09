@@ -316,8 +316,10 @@ body[data-admin]{background:var(--black)}
 .link-button:hover{color:var(--lime)}
 .ops-status{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;padding:4px 9px;border:1px solid var(--panel-line);white-space:nowrap}
 .ops-interested,.ops-fully_paid,.ops-confirmed{color:var(--lime);border-color:var(--lime)}
-.ops-not_interested,.ops-unpaid{color:var(--red);border-color:var(--red)}
+.ops-not_interested,.ops-unpaid,.ops-overdue{color:var(--red);border-color:var(--red)}
 .ops-pending,.ops-partially_paid{color:#e8c547;border-color:#e8c547}
+.due-cutoff-label{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--grey)}
+.due-cutoff-label input[type=date]{background:var(--panel);border:1px solid var(--panel-line);color:var(--paper);padding:6px 8px;font-family:var(--font-body);font-size:13px}
 
 /* toast / modal */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--lime);color:var(--black);padding:14px 20px;font-family:var(--font-mono);font-size:13px;transform:translateY(120%);transition:transform .25s;z-index:80}

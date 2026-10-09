@@ -7,11 +7,17 @@
   function revealOnScroll() {
     const targets = document.querySelectorAll('.class-card,.event-card,.video-card,.teacher-feature,.news-row,.schedule-day,.section-head,.manifest-card,.gallery-item,.index-row');
     targets.forEach(el => el.classList.add('motion-reveal'));
-    if (!('IntersectionObserver' in window)) { targets.forEach(el => el.classList.add('is-visible')); return; }
+    const colorTargets = document.querySelectorAll('.culture-statement');
+    if (!('IntersectionObserver' in window)) {
+      targets.forEach(el => el.classList.add('is-visible'));
+      colorTargets.forEach(el => el.classList.add('is-visible'));
+      return;
+    }
     const io = new IntersectionObserver(entries => entries.forEach(entry => {
       if (entry.isIntersecting) { entry.target.classList.add('is-visible'); io.unobserve(entry.target); }
     }), { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
     targets.forEach(el => io.observe(el));
+    colorTargets.forEach(el => io.observe(el));
   }
 
   function headerShade() {
@@ -47,6 +53,17 @@
     };
     track.addEventListener('scroll', update, { passive: true });
     update();
+
+    track.addEventListener('wheel', e => {
+      if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
+      const max = track.scrollWidth - track.clientWidth;
+      if (max <= 0) return;
+      const atStart = track.scrollLeft <= 0;
+      const atEnd = track.scrollLeft >= max - 1;
+      if ((e.deltaY < 0 && atStart) || (e.deltaY > 0 && atEnd)) return;
+      e.preventDefault();
+      track.scrollLeft += e.deltaY;
+    }, { passive: false });
   }
 
   function countUp() {

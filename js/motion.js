@@ -2,7 +2,7 @@
    Scroll reveal, mobile nav, header shade, pinned culture track, scroll-linked heading fill.
    Replaces the old uploaded-motion.js (custom cursor / page-curtain / grain
    JS removed in favour of a pure-CSS grain overlay and simpler, more robust
-   interactions). Honours prefers-reduced-motion throughout. */
+   interactions). Honours prefers-reduced-motion for effects that play on their own. */
 (function () {
   function revealOnScroll() {
     const targets = document.querySelectorAll('.class-card,.event-card,.video-card,.teacher-feature,.news-row,.schedule-day,.section-head,.manifest-card,.gallery-item,.index-row');
@@ -89,17 +89,9 @@
     const track = document.querySelector('[data-culture-track]');
     const bar = document.querySelector('[data-culture-progress]');
     if (!pin || !sticky || !track) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const update = () => {
-        const max = track.scrollWidth - track.clientWidth;
-        if (bar) bar.style.width = max > 0 ? `${Math.min(100, (track.scrollLeft / max) * 100)}%` : '0%';
-      };
-      track.addEventListener('scroll', update, { passive: true });
-      update();
-      return;
-    }
+    // Stays on under prefers-reduced-motion: the track only moves as the visitor scrolls, never on its own.
     const first = !pinState;
-    pinState = { pin, sticky, track, bar, shift: 0, stickTop: 0 };
+    pinState = { pin, sticky, track, bar, shift: 0, stickTop: 0, sign: -1 };
     measurePin();
     if (first) {
       window.addEventListener('resize', measurePin);
@@ -113,14 +105,16 @@
     const { pin, sticky, track } = pinState;
     pinState.stickTop = parseFloat(getComputedStyle(sticky).top) || 0;
     pinState.shift = Math.max(0, track.scrollWidth - sticky.clientWidth);
+    // In RTL (Arabic) the track overflows to the left, so it has to slide the other way.
+    pinState.sign = getComputedStyle(track).direction === 'rtl' ? 1 : -1;
     pin.style.height = `${sticky.offsetHeight + pinState.shift}px`;
     updatePin();
   }
   function updatePin() {
     if (!pinState) return;
-    const { pin, track, bar, shift, stickTop } = pinState;
+    const { pin, track, bar, shift, stickTop, sign } = pinState;
     const p = shift ? Math.min(1, Math.max(0, (stickTop - pin.getBoundingClientRect().top) / shift)) : 0;
-    track.style.transform = `translate3d(${(-p * shift).toFixed(1)}px,0,0)`;
+    track.style.transform = `translate3d(${(sign * p * shift).toFixed(1)}px,0,0)`;
     if (bar) bar.style.width = `${(p * 100).toFixed(2)}%`;
   }
 

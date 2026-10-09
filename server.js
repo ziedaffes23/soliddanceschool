@@ -178,9 +178,20 @@ function staticFile(urlPath, res) {
   let pathname = decodeURIComponent(urlPath); if (pathname === '/') pathname = '/index.html';
   const clean = path.normalize(pathname).replace(/^\.\.(?:[\\/]|$)/, ''); let file = path.join(ROOT, clean);
   if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
-  if (!fs.existsSync(file) || !fs.statSync(file).isFile()) return text(res, 404, 'Not found', { 'content-type': 'text/plain; charset=utf-8' });
+  // Clean-URL fallback: a route with no file extension (e.g. /cours) resolves to cours.html
+  // when there is no literal file or directory for it, so every route has a single source file.
+  if ((!fs.existsSync(file) || !fs.statSync(file).isFile()) && !path.extname(clean)) {
+    const withHtml = `${file}.html`;
+    if (fs.existsSync(withHtml) && fs.statSync(withHtml).isFile()) file = withHtml;
+  }
+  if (!fs.existsSync(file) || !fs.statSync(file).isFile()) return staticFile.notFound(res);
   const ext = path.extname(file).toLowerCase(); res.writeHead(200, { 'content-type': MIME[ext] || 'application/octet-stream', 'cache-control': ext === '.html' ? 'no-cache' : 'public, max-age=300' }); fs.createReadStream(file).pipe(res);
 }
+staticFile.notFound = function notFound(res) {
+  const file = path.join(ROOT, '404.html');
+  if (fs.existsSync(file)) { res.writeHead(404, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-cache' }); return fs.createReadStream(file).pipe(res); }
+  return text(res, 404, 'Not found', { 'content-type': 'text/plain; charset=utf-8' });
+};
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);

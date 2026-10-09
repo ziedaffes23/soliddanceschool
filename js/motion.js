@@ -68,12 +68,33 @@
     nodes.forEach(el => io.observe(el));
   }
 
+  function pageCurtain() {
+    const curtain = document.querySelector('.page-curtain');
+    if (!curtain) return;
+    setTimeout(() => curtain.classList.add('is-hidden'), 350);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('a[href]').forEach(a => {
+      if (a.target === '_blank' || a.hasAttribute('download') || a.href.startsWith('mailto:') || a.href.startsWith('tel:')) return;
+      let url;
+      try { url = new URL(a.href, location.href); } catch (e) { return; }
+      if (url.origin !== location.origin) return;
+      if (url.pathname === location.pathname && url.hash) return;
+      a.addEventListener('click', e => {
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        curtain.classList.remove('is-hidden');
+        setTimeout(() => { location.href = a.href; }, reduced ? 0 : 320);
+      });
+    });
+  }
+
   function init() {
     headerShade();
     mobileMenu();
     revealOnScroll();
     cultureProgress();
     countUp();
+    pageCurtain();
     requestAnimationFrame(() => document.body.classList.add('page-ready'));
   }
 

@@ -20,3 +20,7 @@ netlify.toml
 _headers
 logo.svg
 .github/
+functions/
+scripts/
+wrangler.toml
+dist/

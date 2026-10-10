@@ -56,7 +56,9 @@ p{margin:0}
 
 /* ---------- page curtain (brand loading/transition screen) ---------- */
 .page-curtain{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;background:var(--lime);transition:opacity .45s ease,visibility .45s ease;opacity:1;visibility:visible}
-.page-curtain span{font-family:var(--font-display);font-weight:800;letter-spacing:-0.02em;text-transform:uppercase;font-size:clamp(32px,8vw,72px);color:var(--black)}
+.page-curtain img{display:block;width:clamp(220px,52vw,560px);height:auto;max-width:80vw;user-select:none;-webkit-user-drag:none}
+@media (prefers-reduced-motion:no-preference){.page-curtain:not(.is-hidden) img{animation:curtain-logo .75s cubic-bezier(.19,1,.22,1) .12s both}}
+@keyframes curtain-logo{from{clip-path:inset(0 100% 0 0);transform:translateY(14px)}to{clip-path:inset(0 0 0 0);transform:none}}
 .page-curtain.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.page-curtain{transition:none}}
 @media (prefers-reduced-motion:no-preference){

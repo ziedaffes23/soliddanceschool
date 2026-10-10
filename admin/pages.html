@@ -1,2 +1,41 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page content — Solid</title><link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/solid-2026.css?v=1"><link rel="stylesheet" href="/css/uploaded-direction.css?v=4"></head><body data-admin="true"><div class="ops-root"><main class="ops-content"><div class="admin-top"><h1 class="admin-title">PAGES.</h1></div><div class="admin-panel"><h2>Editable public content</h2><p>Use the Hero panel for the homepage hero. School story, contact information, opening hours, social links and footer values are structured in the site settings object and documented in README.md.</p></div></main></div><div class="toast"></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/js/supabase-config.js"></script><script src="/js/supabase.js"></script><script src="/js/admin.js?v=ops-shell3"></script><script>initAdmin('pages');</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Site content — Solid</title>
+<link rel="icon" href="/assets/solid-dance-school-logo.png">
+<link rel="stylesheet" href="/css/solid.css?v=solid13">
+</head>
+<body data-admin="true">
+<div class="ops-root"><main class="ops-content">
+  <div class="admin-top"><h1 class="admin-title">SITE CONTENT.</h1></div>
+  <div class="admin-panel">
+    <h2>School story &amp; contact details</h2>
+    <p style="color:var(--grey);font-size:13px;margin-bottom:18px">Shown on the homepage, the studio page, the contact page and the footer across the whole public site.</p>
+    <form id="siteContentForm" class="form-grid">
+      <div class="field"><label>School name</label><input name="schoolName"></div>
+      <div class="field"><label>Tagline</label><input name="tagline"></div>
+      <div class="field full"><label>School story</label><textarea name="story" placeholder="A paragraph about the school, used on the homepage and studio page."></textarea></div>
+      <div class="field"><label>Address</label><input name="address"></div>
+      <div class="field"><label>Phone</label><input name="phone"></div>
+      <div class="field"><label>Email</label><input name="email" type="email"></div>
+      <div class="field"><label>Opening hours</label><input name="hours" placeholder="Mon–Sat · 15:00–21:30"></div>
+      <div class="field"><label>Instagram URL</label><input name="social_instagram" type="url"></div>
+      <div class="field"><label>Facebook URL</label><input name="social_facebook" type="url"></div>
+      <div class="field"><label>TikTok URL</label><input name="social_tiktok" type="url"></div>
+      <div class="field full"><button class="admin-btn" type="submit">Save site content</button></div>
+    </form>
+  </div>
+  <div class="admin-panel">
+    <h2>Other editable content</h2>
+    <p style="color:var(--grey);font-size:13px">The homepage hero (headline, image/video, CTA) is managed from <a href="/admin/hero" style="color:var(--lime)">Hero / Homepage</a>. Classes, teachers, schedules, events, news, videos and gallery each have their own section in the sidebar.</p>
+  </div>
+</main></div>
+<div class="toast"></div>
+<script src="/js/supabase-config.js"></script>
+<script src="/js/supabase.js"></script>
+<script src="/js/admin.js?v=solid13"></script>
+<script>initAdmin('pages');</script>
+</body>
+</html>

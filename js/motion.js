@@ -91,31 +91,75 @@
     if (!pin || !sticky || !track) return;
     // Stays on under prefers-reduced-motion: the track only moves as the visitor scrolls, never on its own.
     const first = !pinState;
-    pinState = { pin, sticky, track, bar, shift: 0, stickTop: 0, sign: -1 };
+    pinState = { pin, sticky, track, bar, shift: 0, stickTop: 0, sign: -1, raw: -1, width: window.innerWidth };
     measurePin();
     if (first) {
       window.addEventListener('resize', measurePin);
       window.addEventListener('load', measurePin);
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(measurePin);
       onFrame(updatePin);
+      sidewaysInput();
     }
   }
   function measurePin() {
     if (!pinState) return;
-    const { pin, sticky, track } = pinState;
-    pinState.stickTop = parseFloat(getComputedStyle(sticky).top) || 0;
-    pinState.shift = Math.max(0, track.scrollWidth - sticky.clientWidth);
+    const s = pinState;
+    // A width change (rotation, window resize) reflows everything above, so put the visitor back where they were in the strip.
+    const keep = s.width !== window.innerWidth && s.raw > 0 && s.raw < 1 ? s.raw : null;
+    s.width = window.innerWidth;
+    s.stickTop = parseFloat(getComputedStyle(s.sticky).top) || 0;
+    s.shift = Math.max(0, s.track.scrollWidth - s.sticky.clientWidth);
     // In RTL (Arabic) the track overflows to the left, so it has to slide the other way.
-    pinState.sign = getComputedStyle(track).direction === 'rtl' ? 1 : -1;
-    pin.style.height = `${sticky.offsetHeight + pinState.shift}px`;
+    s.sign = getComputedStyle(s.track).direction === 'rtl' ? 1 : -1;
+    s.pin.style.height = `${s.sticky.offsetHeight + s.shift}px`;
+    if (keep !== null) window.scrollTo({ top: s.pin.getBoundingClientRect().top + window.scrollY - s.stickTop + keep * s.shift, behavior: 'instant' });
     updatePin();
   }
   function updatePin() {
     if (!pinState) return;
-    const { pin, track, bar, shift, stickTop, sign } = pinState;
-    const p = shift ? Math.min(1, Math.max(0, (stickTop - pin.getBoundingClientRect().top) / shift)) : 0;
-    track.style.transform = `translate3d(${(sign * p * shift).toFixed(1)}px,0,0)`;
-    if (bar) bar.style.width = `${(p * 100).toFixed(2)}%`;
+    const s = pinState;
+    s.raw = s.shift ? (s.stickTop - s.pin.getBoundingClientRect().top) / s.shift : -1;
+    const p = Math.min(1, Math.max(0, s.raw));
+    s.track.style.transform = `translate3d(${(s.sign * p * s.shift).toFixed(1)}px,0,0)`;
+    if (s.bar) s.bar.style.width = `${(p * 100).toFixed(2)}%`;
+  }
+  // Sideways swipes, tilt wheels and Shift+wheel drive the same strip by scrolling the page,
+  // but only while the section is pinned and not past either end, so the visitor is never trapped.
+  function sidewaysScroll(dy) {
+    const raw = pinState.raw;
+    if (!pinState.shift || raw < 0 || raw > 1 || (dy > 0 && raw >= 0.999) || (dy < 0 && raw <= 0.001)) return false;
+    window.scrollBy({ top: dy, behavior: 'instant' });
+    return true;
+  }
+  function sidewaysInput() {
+    const { pin, sticky } = pinState;
+    pin.addEventListener('wheel', e => {
+      // Some browsers report Shift+wheel as a vertical delta with shiftKey set instead of a horizontal one.
+      const shiftWheel = e.shiftKey && !e.deltaX;
+      const dx = shiftWheel ? e.deltaY : e.deltaX;
+      if (!shiftWheel && Math.abs(dx) <= Math.abs(e.deltaY)) return;
+      const unit = e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? window.innerHeight : 1;
+      if (sidewaysScroll((shiftWheel ? 1 : -pinState.sign) * dx * unit)) e.preventDefault();
+    }, { passive: false });
+    let x = null, y = 0, axis = null;
+    sticky.addEventListener('touchstart', e => {
+      x = e.touches.length === 1 ? e.touches[0].clientX : null;
+      y = x === null ? 0 : e.touches[0].clientY;
+      axis = null;
+    }, { passive: true });
+    sticky.addEventListener('touchmove', e => {
+      if (x === null) return;
+      const t = e.touches[0];
+      const dx = t.clientX - x, dy = t.clientY - y;
+      if (!axis) {
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      }
+      if (axis !== 'x') return;
+      x = t.clientX; y = t.clientY;
+      sidewaysScroll(pinState.sign * dx);
+    }, { passive: true });
+    sticky.addEventListener('touchend', () => { x = null; }, { passive: true });
   }
 
   function countUp() {

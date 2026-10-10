@@ -128,7 +128,14 @@ body.nav-open{overflow:hidden}
 
 /* ---------- index / manifest rows ---------- */
 .index-grid{display:grid;gap:0}
-.index-row{display:grid;grid-template-columns:48px 1fr auto;gap:20px;align-items:center;padding:26px 0;border-bottom:1px solid var(--panel-line)}
+.index-row{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:20px;align-items:center;padding:26px 0;border-bottom:1px solid var(--panel-line)}
+.index-row>*{min-width:0}
+.index-row h3{overflow-wrap:anywhere}
+@media (max-width:600px){
+  .index-row{grid-template-columns:32px minmax(0,1fr);gap:10px 14px}
+  .index-row>:nth-child(n+3){grid-column:2;justify-self:start}
+  .index-row .button{white-space:normal}
+}
 .index-row .num{font-family:var(--font-mono);color:var(--lime);font-size:13px}
 .index-row h3{font-size:clamp(20px,3vw,30px)}
 .index-row .arrow{font-size:22px;color:var(--grey);transition:transform .2s,color .2s}
@@ -226,13 +233,13 @@ body.nav-open{overflow:hidden}
 
 /* ---------- community / culture (pinned horizontal scroll) ---------- */
 .culture-pin{position:relative}
-.culture-sticky{position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));height:calc(100svh - var(--header-h));overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.culture-sticky{position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));height:calc(100svh - var(--header-h));overflow:hidden;display:flex;flex-direction:column;justify-content:center;justify-content:safe center;touch-action:pan-y pinch-zoom}
 .culture-head{width:100%;max-width:var(--container);margin:0 auto;padding:0 var(--gutter)}
 .culture-head .section-head{margin-bottom:0}
 .culture-track{display:flex;align-items:center;gap:clamp(18px,2vw,28px);width:max-content;padding:clamp(24px,5vh,48px) max(var(--gutter),calc((100% - var(--container)) / 2 + var(--gutter)));will-change:transform}
 .culture-statement{font-size:clamp(40px,6.5vw,84px);flex:0 0 min(82vw,600px);line-height:.92}
-.culture-statement span{color:var(--lime)}
-.culture-card{position:relative;flex:0 0 clamp(200px,20vw,280px);aspect-ratio:3/4;background:linear-gradient(160deg,var(--panel),var(--ink) 70%);border:1px solid var(--panel-line);overflow:hidden}
+.culture-statement span:not(.sw-fill){color:var(--lime)}
+.culture-card{position:relative;margin:0;flex:0 0 clamp(200px,20vw,280px);aspect-ratio:3/4;background:linear-gradient(160deg,var(--panel),var(--ink) 70%);border:1px solid var(--panel-line);overflow:hidden}
 .culture-card.wide{flex-basis:clamp(280px,30vw,420px);aspect-ratio:16/10}
 .culture-card.sq{flex-basis:clamp(200px,20vw,280px);aspect-ratio:1}
 .culture-card::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 22px,rgba(200,255,61,.035) 22px 23px)}
@@ -241,6 +248,13 @@ body.nav-open{overflow:hidden}
 .culture-quote small{font-family:var(--font-mono);font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.08em}
 .culture-progress{height:3px;border:0;background:var(--panel-line)}
 .culture-progress span{width:0}
+/* The community copy is English only, so keep it left-to-right on the Arabic page. */
+.culture-statement,.culture-quote,.culture-head .section-kicker{direction:ltr;unicode-bidi:isolate}
+[dir=rtl] .culture-arrow{display:inline-block;transform:scaleX(-1)}
+@media (max-height:560px){
+  .culture-track{padding-block:12px}
+  .culture-card,.culture-card.sq,.culture-card.wide{flex-basis:auto;height:max(120px,calc(100svh - var(--header-h) - 100px))}
+}
 
 /* ---------- scroll-linked text fill (gray -> full colour as you scroll) ---------- */
 .sw-fill{background-image:linear-gradient(90deg,currentColor calc(var(--sw,0%) - 6%),color-mix(in srgb,currentColor 24%,transparent) var(--sw,0%));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}

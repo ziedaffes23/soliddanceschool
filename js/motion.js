@@ -91,21 +91,24 @@
     if (!pin || !sticky || !track) return;
     // Stays on under prefers-reduced-motion: the track only moves as the visitor scrolls, never on its own.
     const first = !pinState;
-    pinState = { pin, sticky, track, bar, shift: 0, stickTop: 0, sign: -1, raw: -1, width: window.innerWidth };
+    pinState = { pin, sticky, track, bar, shift: 0, stickTop: 0, sign: -1, raw: -1, userRaw: null, scrolled: false, width: window.innerWidth };
     measurePin();
     if (first) {
+      window.addEventListener('scroll', () => { pinState.scrolled = true; }, { passive: true });
       window.addEventListener('resize', measurePin);
       window.addEventListener('load', measurePin);
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(measurePin);
       onFrame(updatePin);
-      sidewaysInput();
+      pin.addEventListener('wheel', sidewaysWheel, { passive: false });
     }
   }
   function measurePin() {
     if (!pinState) return;
     const s = pinState;
-    // A width change (rotation, window resize) reflows everything above, so put the visitor back where they were in the strip.
-    const keep = s.width !== window.innerWidth && s.raw > 0 && s.raw < 1 ? s.raw : null;
+    // A width change (rotation, window resize) reflows everything above, so put the visitor back
+    // where they last scrolled to in the strip. userRaw only changes on real scrolls, not on reflows.
+    const u = s.userRaw;
+    const keep = s.width !== window.innerWidth && u !== null && u >= 0 && u <= 1 ? u : null;
     s.width = window.innerWidth;
     s.stickTop = parseFloat(getComputedStyle(s.sticky).top) || 0;
     s.shift = Math.max(0, s.track.scrollWidth - s.sticky.clientWidth);
@@ -119,47 +122,26 @@
     if (!pinState) return;
     const s = pinState;
     s.raw = s.shift ? (s.stickTop - s.pin.getBoundingClientRect().top) / s.shift : -1;
+    if (s.scrolled || s.userRaw === null) { s.userRaw = s.raw; s.scrolled = false; }
     const p = Math.min(1, Math.max(0, s.raw));
     s.track.style.transform = `translate3d(${(s.sign * p * s.shift).toFixed(1)}px,0,0)`;
     if (s.bar) s.bar.style.width = `${(p * 100).toFixed(2)}%`;
   }
-  // Sideways swipes, tilt wheels and Shift+wheel drive the same strip by scrolling the page,
-  // but only while the section is pinned and not past either end, so the visitor is never trapped.
-  function sidewaysScroll(dy) {
-    const raw = pinState.raw;
-    if (!pinState.shift || raw < 0 || raw > 1 || (dy > 0 && raw >= 0.999) || (dy < 0 && raw <= 0.001)) return false;
+  // A clearly sideways trackpad swipe, tilt wheel or Shift+wheel drives the strip by scrolling the page,
+  // only while it is pinned, clamped to its ends, so the visitor is never trapped or thrown past it.
+  function sidewaysWheel(e) {
+    const s = pinState;
+    let dy;
+    if (e.shiftKey) dy = e.deltaX || e.deltaY;
+    else if (Math.abs(e.deltaX) > 2 * Math.abs(e.deltaY)) dy = -s.sign * e.deltaX;
+    else return;
+    dy *= e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? window.innerHeight : 1;
+    const raw = (s.stickTop - s.pin.getBoundingClientRect().top) / (s.shift || 1);
+    if (!s.shift || raw < 0 || raw > 1) return;
+    dy = dy > 0 ? Math.min(dy, (1 - raw) * s.shift) : Math.max(dy, -raw * s.shift);
+    if (Math.abs(dy) < 0.5) return;
+    e.preventDefault();
     window.scrollBy({ top: dy, behavior: 'instant' });
-    return true;
-  }
-  function sidewaysInput() {
-    const { pin, sticky } = pinState;
-    pin.addEventListener('wheel', e => {
-      // Some browsers report Shift+wheel as a vertical delta with shiftKey set instead of a horizontal one.
-      const shiftWheel = e.shiftKey && !e.deltaX;
-      const dx = shiftWheel ? e.deltaY : e.deltaX;
-      if (!shiftWheel && Math.abs(dx) <= Math.abs(e.deltaY)) return;
-      const unit = e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? window.innerHeight : 1;
-      if (sidewaysScroll((shiftWheel ? 1 : -pinState.sign) * dx * unit)) e.preventDefault();
-    }, { passive: false });
-    let x = null, y = 0, axis = null;
-    sticky.addEventListener('touchstart', e => {
-      x = e.touches.length === 1 ? e.touches[0].clientX : null;
-      y = x === null ? 0 : e.touches[0].clientY;
-      axis = null;
-    }, { passive: true });
-    sticky.addEventListener('touchmove', e => {
-      if (x === null) return;
-      const t = e.touches[0];
-      const dx = t.clientX - x, dy = t.clientY - y;
-      if (!axis) {
-        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-        axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-      }
-      if (axis !== 'x') return;
-      x = t.clientX; y = t.clientY;
-      sidewaysScroll(pinState.sign * dx);
-    }, { passive: true });
-    sticky.addEventListener('touchend', () => { x = null; }, { passive: true });
   }
 
   function countUp() {

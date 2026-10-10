@@ -124,15 +124,15 @@ body.nav-open{overflow:hidden}
 
 /* ---------- page hero (inner pages) ---------- */
 .page-hero{padding:calc(var(--header-h) + 64px) var(--gutter) 40px;max-width:var(--container);margin:0 auto}
-.page-hero h1{font-size:clamp(44px,9vw,110px);margin-top:14px;border-bottom:1px solid var(--panel-line);padding-bottom:28px}
+.page-hero h1{font-size:clamp(30px,9vw,110px);overflow-wrap:break-word;margin-top:14px;border-bottom:1px solid var(--panel-line);padding-bottom:28px}
 
 /* ---------- index / manifest rows ---------- */
 .index-grid{display:grid;gap:0}
-.index-row{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:20px;align-items:center;padding:26px 0;border-bottom:1px solid var(--panel-line)}
-.index-row>*{min-width:0}
-.index-row h3{overflow-wrap:anywhere}
+.index-row{display:grid;grid-template-columns:48px 1fr auto;gap:20px;align-items:center;padding:26px 0;border-bottom:1px solid var(--panel-line)}
 @media (max-width:600px){
   .index-row{grid-template-columns:32px minmax(0,1fr);gap:10px 14px}
+  .index-row>*{min-width:0}
+  .index-row h3{overflow-wrap:break-word}
   .index-row>:nth-child(n+3){grid-column:2;justify-self:start}
   .index-row .button{white-space:normal}
 }
@@ -233,7 +233,7 @@ body.nav-open{overflow:hidden}
 
 /* ---------- community / culture (pinned horizontal scroll) ---------- */
 .culture-pin{position:relative}
-.culture-sticky{position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));height:calc(100svh - var(--header-h));overflow:hidden;display:flex;flex-direction:column;justify-content:center;justify-content:safe center;touch-action:pan-y pinch-zoom}
+.culture-sticky{position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));height:calc(100svh - var(--header-h));overflow:hidden;display:flex;flex-direction:column;justify-content:center;justify-content:safe center}
 .culture-head{width:100%;max-width:var(--container);margin:0 auto;padding:0 var(--gutter)}
 .culture-head .section-head{margin-bottom:0}
 .culture-track{display:flex;align-items:center;gap:clamp(18px,2vw,28px);width:max-content;padding:clamp(24px,5vh,48px) max(var(--gutter),calc((100% - var(--container)) / 2 + var(--gutter)));will-change:transform}
@@ -250,18 +250,22 @@ body.nav-open{overflow:hidden}
 .culture-progress span{width:0}
 /* The community copy is English only, so keep it left-to-right on the Arabic page. */
 .culture-statement,.culture-quote,.culture-head .section-kicker{direction:ltr;unicode-bidi:isolate}
+[dir=rtl] .culture-statement{text-align:right}
 [dir=rtl] .culture-arrow{display:inline-block;transform:scaleX(-1)}
+/* Short screens (landscape phones): cards shrink to fit the height, never grow past their normal size. */
 @media (max-height:560px){
-  .culture-track{padding-block:12px}
-  .culture-card,.culture-card.sq,.culture-card.wide{flex-basis:auto;height:max(120px,calc(100svh - var(--header-h) - 100px))}
+  .culture-track{padding-block:clamp(8px,3vh,24px)}
+  .culture-card,.culture-card.sq,.culture-card.wide{--card-max:max(80px,calc(100svh - var(--header-h) - 100px));flex-basis:auto;height:min(calc(clamp(200px,20vw,280px) * 4 / 3),var(--card-max))}
+  .culture-card.sq{height:min(clamp(200px,20vw,280px),var(--card-max))}
+  .culture-card.wide{height:min(calc(clamp(280px,30vw,420px) / 1.6),var(--card-max))}
 }
 
 /* ---------- scroll-linked text fill (gray -> full colour as you scroll) ---------- */
 .sw-fill{background-image:linear-gradient(90deg,currentColor calc(var(--sw,0%) - 6%),color-mix(in srgb,currentColor 24%,transparent) var(--sw,0%));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.sw-fill span{background-image:linear-gradient(90deg,currentColor calc(var(--sw-inner,0%) - 6%),color-mix(in srgb,currentColor 24%,transparent) var(--sw-inner,0%));-webkit-background-clip:text;background-clip:text}
+.sw-fill span{background-image:linear-gradient(90deg,currentColor calc(var(--sw-inner,0%) - 6%),color-mix(in srgb,currentColor 24%,var(--black)) var(--sw-inner,0%));-webkit-background-clip:text;background-clip:text}
 
 /* ---------- contact / registration ---------- */
-.split{display:grid;grid-template-columns:1fr 1.1fr;gap:50px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:50px}
 @media (max-width:860px){ .split{grid-template-columns:1fr} }
 .owner-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:24px;margin-top:20px}
 @media (max-width:760px){ .owner-grid{grid-template-columns:1fr} }
@@ -270,19 +274,19 @@ body.nav-open{overflow:hidden}
 .map-panel{border:1px solid var(--panel-line);min-height:260px}
 .map-embed{width:100%;height:100%;min-height:260px;border:0;filter:grayscale(1) invert(.92) contrast(.9)}
 
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.field{display:flex;flex-direction:column;gap:6px}
+.form-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
 .field.full{grid-column:1/-1}
 .field label{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey)}
-.field input,.field select,.field textarea{background:var(--panel);border:1px solid var(--panel-line);padding:12px 14px;color:var(--paper);font-family:var(--font-body)}
+.field input,.field select,.field textarea{min-width:0;width:100%;background:var(--panel);border:1px solid var(--panel-line);padding:12px 14px;color:var(--paper);font-family:var(--font-body)}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--lime)}
 .field textarea{min-height:90px;resize:vertical}
-.registration-group{border:0;padding:0;margin:0;grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.registration-group{border:0;padding:0;margin:0;min-width:0;grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
 .registration-group legend{grid-column:1/-1;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);padding:18px 0 4px;border-top:1px solid var(--panel-line)}
 .registration-group:first-of-type legend{border-top:0;padding-top:0}
 .consent-field label{display:flex;gap:10px;align-items:flex-start;font-family:var(--font-body);font-size:13px;color:var(--paper-dim);text-transform:none}
 .form-status,#registrationNotice.notice{margin-top:12px}
-@media (max-width:620px){ .form-grid,.registration-group{grid-template-columns:1fr} }
+@media (max-width:620px){ .form-grid,.registration-group{grid-template-columns:minmax(0,1fr)} }
 
 /* ---------- page CTA band ---------- */
 .page-cta{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;padding:70px var(--gutter);max-width:var(--container);margin:0 auto;border-top:1px solid var(--panel-line)}

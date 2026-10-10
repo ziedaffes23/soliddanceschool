@@ -1,12 +1,19 @@
-# Deploying to Cloudflare Pages
+# Deploying to Cloudflare (Workers + static assets)
 
-Static site + API run on Cloudflare Pages (the API is `functions/api/[[path]].js`, which wraps the shared `api/_core.js`).
+`wrangler.toml` deploys one Worker (`solid-dance-school`): `/api/*` runs the shared API core (`api/_core.js`, backed by Supabase), everything else is served from `dist/` (built by `scripts/build-cloudflare.js`).
 
-1. Cloudflare dashboard → Workers & Pages → Create → Pages → Connect to Git → `ziedaffes23/soliddanceschool`.
-2. Production branch: `redesign/unified-design-system-and-admin-cms` (or `main` after merging).
-3. Build command: `node scripts/build-cloudflare.js` — Build output directory: `dist`.
-4. Settings → Variables and Secrets (Production): `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (secret), optional `SESSION_SECRET` (secret), `ADMIN_INITIAL_PASSWORD`.
-5. Compatibility flag `nodejs_compat` is set in `wrangler.toml`.
-6. Deploy, then open `/admin/login` — default accounts must set a new password on first login.
+## One-time secrets
+```
+npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+npx wrangler secret put SESSION_SECRET        # any long random string (recommended)
+```
+Optional plain vars: `SUPABASE_URL`, `ADMIN_INITIAL_PASSWORD`.
 
-CLI alternative: `node scripts/build-cloudflare.js && npx wrangler pages deploy dist --project-name soliddanceschool`.
+## Deploy
+```
+CLOUDFLARE_API_TOKEN=... npx wrangler deploy
+```
+or connect the repo under Workers & Pages → solid-dance-school → Settings → Builds (build: `node scripts/build-cloudflare.js`, deploy: `npx wrangler deploy`).
+
+Default `admin` / `manager` accounts must set a new password on first login.
+The legacy `SolidDataStore` Durable Object class is kept as a stub so old data is never deleted.

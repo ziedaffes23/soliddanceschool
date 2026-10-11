@@ -532,3 +532,4 @@ a.index-row:hover .num,a.index-row:hover .arrow,a.index-row:hover .arrow span{co
 .page-curtain:not(.is-hidden){transition:transform .65s cubic-bezier(.76,0,.24,1),visibility 0s}
 .page-curtain.is-hidden{transform:translateY(-101%);opacity:1}
 @media (prefers-reduced-motion:reduce){.page-curtain{transition:none}.page-curtain.is-hidden{transform:none;opacity:0}}
+.footer-monument{justify-content:center;text-align:center}

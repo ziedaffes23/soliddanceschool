@@ -17,7 +17,7 @@
       <div class="field"><label>Name</label><input name="name" required></div>
       <div class="field"><label>Styles</label><input name="styles" placeholder="Hip Hop · House"></div>
       <div class="field full"><label>Bio</label><textarea name="bio" placeholder="Short teacher bio for the public site."></textarea></div>
-      <div class="field"><label>Portrait image URL</label><input name="imageurl" type="url" placeholder="https://..."></div>
+      <div class="field"><label>Portrait image URL</label><input name="imageurl" type="text" placeholder="https://... (direct image link)"><small class="field-help">Facebook / Instagram post links and photo pages cannot be shown. Upload the picture instead.</small></div><div class="field"><label>Or upload a photo</label><input type="file" accept="image/*" data-portrait-upload><img data-portrait-preview alt="" style="display:none;margin-top:8px;max-width:140px;aspect-ratio:3/4;object-fit:cover;border:1px solid var(--panel-line)"></div>
       <div class="field"><label>Portrait alt text</label><input name="alt"></div>
       <div class="field"><label>Published</label><select name="published"><option value="true">Published</option><option value="false">Hidden</option></select></div>
       <div class="field full admin-actions"><button class="admin-btn" type="submit">Save item</button><button class="admin-btn secondary" type="button" data-crud-cancel hidden>Cancel edit</button></div>
@@ -26,6 +26,13 @@
   <div class="admin-panel"><h2>Content library</h2><div data-table></div></div>
 </main></div>
 <div class="toast"></div>
+<script>
+document.addEventListener('change',e=>{const inp=e.target.closest('[data-portrait-upload]');if(!inp||!inp.files[0])return;
+const f=inp.files[0],img=new Image(),url=URL.createObjectURL(f);
+img.onload=()=>{const max=800,k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+const data=c.toDataURL('image/jpeg',.82),form=inp.closest('form');form.elements.imageurl.value=data;const pv=form.querySelector('[data-portrait-preview]');pv.src=data;pv.style.display='block';URL.revokeObjectURL(url)};
+img.onerror=()=>alert('Could not read that image.');img.src=url});
+</script>
 <script src="/js/supabase-config.js"></script>
 <script src="/js/supabase.js"></script>
 <script src="/js/admin.js?v=solid13"></script>

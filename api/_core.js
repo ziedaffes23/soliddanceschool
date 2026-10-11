@@ -272,7 +272,7 @@ const TZ = 'Africa/Tunis';
 const tunisToday = () => new Date().toLocaleDateString('en-CA', { timeZone: TZ });
 const addDaysIso = (iso, n) => { const d = new Date(`${iso}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
 const dayDiff = (a, b) => Math.round((new Date(`${a}T12:00:00Z`) - new Date(`${b}T12:00:00Z`)) / 86400000);
-const mailPrefs = data => Object.assign({ ownerEmail: '', notifyRegistrations: true, notifyPayments: true, remindersOn: true }, (data && data.mailSettings) || {});
+const mailPrefs = data => Object.assign({ ownerEmail: '', notifyRegistrations: true, notifyPayments: true, remindersOn: true, confirmRegistrations: true }, (data && data.mailSettings) || {});
 const ownerAddress = data => process.env.OWNER_EMAIL || mailPrefs(data).ownerEmail || (data.siteSettings && data.siteSettings.email) || '';
 const paidSum = r => ((r.paymentPlan && r.paymentPlan.payments) || []).filter(p => p && p.status === 'paid').reduce((n, p) => n + (Number(p.amount) || 0), 0);
 function totalOf(data, r) { const pk = (data.packs || []).find(p => p.id === r.packId); if (pk) return (Number(pk.classPrice) || 0) + (Number(pk.insurance) || 0) + (Number(pk.showFee) || 0); return Number(r.paymentPlan && r.paymentPlan.total) || 0; }
@@ -479,7 +479,12 @@ async function handle(req, res) {
         data.notifications = data.notifications.slice(0, 200);
         data._rev = (Number(data._rev) || 0) + 1;
         await putData(data);
-        if (!duplicate && mailPrefs(data).notifyRegistrations !== false) await notifyOwner(data, mail.ownerNewRegistration(entry, adminUrlOf(req)));
+        if (!duplicate) {
+          const prefs = mailPrefs(data), jobs = [];
+          if (prefs.notifyRegistrations !== false) jobs.push(notifyOwner(data, mail.ownerNewRegistration(entry, adminUrlOf(req))));
+          if (prefs.confirmRegistrations !== false && mail.validEmail(entry.email)) jobs.push(withTimeout(mail.sendMail({ to: entry.email, replyTo: ownerAddress(data), ...mail.parentRegistration(entry, data.siteSettings || {}) })));
+          await Promise.all(jobs.map(j => Promise.resolve(j).catch(() => null)));
+        }
         return json(res, 200, { ok: true, duplicate: !!duplicate });
       });
     }

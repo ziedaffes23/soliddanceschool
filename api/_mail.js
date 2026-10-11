@@ -110,10 +110,21 @@ function ownerDigest(sent, missing, failed, today) {
       body: block('Envoyés', sent, '#1b7a2f') + block('Sans adresse email — à contacter par téléphone', missing, '#b3261e') + block('Échecs d’envoi', failed, '#b3261e') }),
     text: `Rappels envoyés: ${sent.join(', ') || 'aucun'}\nSans email: ${missing.join(', ') || '—'}\nÉchecs: ${failed.join(', ') || '—'}` };
 }
+function parentRegistration(r, school) {
+  const who = r.parentName || r.fatherName || r.name, contact = [school.phone, school.email].filter(Boolean).map(esc).join(' &nbsp;·&nbsp; ');
+  const rows = [['Élève', r.name], ['Date et lieu de naissance', r.dob || r.birthInfo], ['Style de danse', r.danceStyle], ['Cours souhaité', r.class || r.className], ['Téléphone', r.fatherPhone || r.phone], ['Email', r.email || r.fatherEmail]];
+  const steps = ['Nous étudions votre demande et vous contactons très prochainement.', 'Nous vous confirmons le cours, l’horaire et les tarifs.', 'Vous finalisez l’inscription directement à l’école.'];
+  const stepsHtml = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:22px 0 0">${steps.map((t, i) => `<tr><td width="38" valign="top" style="padding:0 0 12px"><div style="width:28px;height:28px;line-height:28px;text-align:center;border-radius:99px;background:${INK};color:${LIME};font-weight:800;font-size:13px">${i + 1}</div></td><td style="padding:3px 0 12px;font-size:14px;line-height:1.5;color:#33362f">${esc(t)}</td></tr>`).join('')}</table>`;
+  return { subject: `Inscription reçue — ${r.name || 'Solid Dance School'}`,
+    html: shell({ preheader: `Nous avons bien reçu l’inscription de ${r.name || 'votre enfant'}.`, badge: 'Inscription reçue', title: 'Merci, c’est bien reçu !', intro: `Bonjour <b>${esc(who)}</b>,<br>nous avons bien reçu l’inscription de <b>${esc(r.name || '')}</b> à Solid Dance School. Voici le récapitulatif de votre demande :`,
+      body: rowsHtml(rows) + `<p style="margin:22px 0 0;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:${MUTED};font-weight:700">Et maintenant ?</p>` + stepsHtml + `<p style="margin:10px 0 0;font-size:14px;line-height:1.6">À très bientôt,<br><b>L’équipe Solid Dance School</b></p>`,
+      footer: contact ? `Une question ? Contactez-nous : ${contact}` : 'Solid Dance School' }),
+    text: `Bonjour ${who},\n\nNous avons bien reçu l'inscription de ${r.name || ''} à Solid Dance School.\n\n${rowsText(rows)}\n\nNous vous contactons très prochainement pour confirmer le cours, l'horaire et les tarifs.\n\nSolid Dance School${school.phone || school.email ? '\n' + [school.phone, school.email].filter(Boolean).join(' · ') : ''}` };
+}
 function testMail() {
   return { subject: 'Test — Solid Dance School',
     html: shell({ preheader: 'Les emails du site fonctionnent.', badge: 'Test', title: 'Tout fonctionne ✓', intro: 'Les emails du site Solid Dance School sont bien configurés. Vous recevrez ici les nouvelles inscriptions et les paiements.' }),
     text: 'Les emails du site Solid Dance School fonctionnent.' };
 }
 
-module.exports = { sendMail, isConfigured, config, validEmail, ownerNewRegistration, ownerPayment, parentReminder, ownerDigest, testMail, money };
+module.exports = { sendMail, isConfigured, config, validEmail, ownerNewRegistration, ownerPayment, parentReminder, parentRegistration, ownerDigest, testMail, money };

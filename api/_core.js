@@ -119,7 +119,8 @@ function clearFailures(key) { buckets.delete('fail:' + key); }
 let memoryDoc = {};
 async function supabase(pathname, options = {}) {
   if (!SERVICE_KEY) throw Object.assign(new Error('SUPABASE_SERVICE_ROLE_KEY is not configured.'), { status: 503 });
-  const headers = { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, 'content-type': 'application/json', ...(options.headers || {}) };
+  // Legacy service_role keys are JWTs (sent as Bearer too); new sb_secret_ keys go in the apikey header only.
+  const headers = { apikey: SERVICE_KEY, ...(SERVICE_KEY.startsWith('eyJ') ? { Authorization: `Bearer ${SERVICE_KEY}` } : {}), 'content-type': 'application/json', ...(options.headers || {}) };
   const response = await fetch(`${SUPABASE_URL}${pathname}`, { ...options, headers });
   const raw = await response.text();
   let data = null; try { data = raw ? JSON.parse(raw) : null; } catch { data = raw; }

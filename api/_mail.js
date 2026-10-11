@@ -68,7 +68,7 @@ const shell = ({ preheader = '', badge = '', title, intro = '', body = '', cta, 
  </td></tr>
  <tr><td style="background:#f7f8f3;padding:18px 28px;border:1px solid ${LINE};border-top:0;border-radius:0 0 14px 14px;font-size:12px;line-height:1.6;color:${MUTED}">${footer || 'Solid Dance School'}</td></tr>
 </table>
-<p style="margin:14px 0 0;font-size:11px;color:#9a9d94;font-family:${FONT}">Message automatique envoyé par le site Solid Dance School.</p>
+<p style="margin:14px 0 0;font-size:11px;color:#9a9d94;font-family:${FONT}">Message automatique envoyé par Zied Affes</p>
 </td></tr></table></body></html>`;
 
 const rowsHtml = rows => { const r = rows.filter(x => x[1] !== undefined && x[1] !== null && x[1] !== '' && x[1] !== '—'); if (!r.length) return '';

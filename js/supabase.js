@@ -97,9 +97,25 @@
     location.href='/admin/login';
   }
 
+  /** Upload a photo/video to storage; returns its public URL. Images fall back to an inline compressed copy if storage is unavailable. */
+  async function shrinkImage(file,max=1920){return new Promise((ok,bad)=>{const img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{const k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?ok(b):bad(new Error('Could not process image')),'image/jpeg',.85)};img.onerror=()=>bad(new Error('Could not read that image'));img.src=u})}
+  async function uploadFile(file,onStatus=()=>{}){
+    if(!file)throw new Error('No file chosen');
+    let body=file,type=file.type||'';
+    if(/^image\//.test(type)&&type!=='image/gif'&&file.size>600*1024){onStatus('Optimizing photo…');body=await shrinkImage(file);type='image/jpeg'}
+    if(body.size>50*1024*1024)throw new Error('File is too large (50 MB maximum).');
+    onStatus('Preparing upload…');
+    const info=await api('/api/upload-url',{method:'POST',body:json({name:file.name,type,size:body.size})});
+    onStatus('Uploading '+Math.round(body.size/1024/1024*10)/10+' MB…');
+    const cfg=window.SOLID_SUPABASE_CONFIG||{},fd=new FormData();fd.append('cacheControl','31536000');fd.append('',body);
+    const headers={'x-upsert':'false'};if(cfg.anonKey){headers.apikey=cfg.anonKey;if(String(cfg.anonKey).startsWith('eyJ'))headers.Authorization='Bearer '+cfg.anonKey}
+    const r=await fetch(info.uploadUrl,{method:'PUT',headers,body:fd});
+    if(!r.ok){const t=await r.text().catch(()=>'');throw new Error('Upload failed ('+r.status+') '+t.slice(0,140))}
+    return info.publicUrl;
+  }
   async function savePublicRegistration(entry){return api('/api/public-registration',{method:'POST',body:json({entry})})}
   async function session(){return api('/api/session')}
-  window.solidCloud={enabled:true,restore,save,flush,logout,savePublicRegistration,session,api};
+  window.solidCloud={enabled:true,upload:uploadFile,restore,save,flush,logout,savePublicRegistration,session,api};
   window.addEventListener('beforeunload',e=>{if(pending>0){e.preventDefault();e.returnValue=''}});
   verifySession();
   window.addEventListener('load',()=>setTimeout(restore,120));

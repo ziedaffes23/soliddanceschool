@@ -294,6 +294,28 @@ async function handle(req, res) {
       });
     }
 
+    if (path === '/api/upload-url' && method === 'POST') {
+      const actor = await requireUser(req, res, { role: 'admin' }); if (!actor) return;
+      if (!SERVICE_KEY) return json(res, 501, { ok: false, error: 'File storage is not configured on this server.' });
+      if (!throttle('up:' + actor.sub, 40, 15 * 60 * 1000)) return json(res, 429, { ok: false, error: 'Too many uploads. Try again later.' });
+      const body = await readBody(req); const type = String(body.type || '').toLowerCase(), size = Number(body.size) || 0;
+      const okType = /^image\/(jpeg|png|webp|gif|avif)$/.test(type) || /^video\/(mp4|webm|quicktime)$/.test(type);
+      if (!okType) return json(res, 400, { ok: false, error: 'Use a JPG, PNG, WebP, GIF, MP4, WebM or MOV file.' });
+      if (size > 50 * 1024 * 1024) return json(res, 400, { ok: false, error: 'File is too large (50 MB maximum).' });
+      const ext = ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/avif': 'avif', 'video/mp4': 'mp4', 'video/webm': 'webm', 'video/quicktime': 'mov' })[type];
+      const base = String(body.name || 'file').replace(/\.[^.]*$/, '').replace(/[^A-Za-z0-9_-]+/g, '-').slice(0, 40) || 'file';
+      const objectPath = `uploads/${Date.now()}-${crypto.randomBytes(3).toString('hex')}-${base}.${ext}`;
+      const auth = { apikey: SERVICE_KEY, ...(SERVICE_KEY.startsWith('eyJ') ? { Authorization: `Bearer ${SERVICE_KEY}` } : {}), 'content-type': 'application/json' };
+      const bucketRes = await fetch(`${SUPABASE_URL}/storage/v1/bucket`, { method: 'POST', headers: auth, body: JSON.stringify({ id: 'site-media', name: 'site-media', public: true, file_size_limit: 52428800 }) });
+      if (!bucketRes.ok && bucketRes.status !== 409) {
+        const t = await bucketRes.text(); if (!/already exists|Duplicate/i.test(t)) return json(res, 502, { ok: false, error: 'Could not prepare storage: ' + t.slice(0, 160) });
+      }
+      const signRes = await fetch(`${SUPABASE_URL}/storage/v1/object/upload/sign/site-media/${objectPath}`, { method: 'POST', headers: auth, body: '{}' });
+      const sign = await signRes.json().catch(() => ({}));
+      if (!signRes.ok || !sign.url) return json(res, 502, { ok: false, error: 'Could not create upload link: ' + String(sign.message || sign.error || signRes.status).slice(0, 160) });
+      const rel = sign.url.startsWith('http') ? sign.url : `${SUPABASE_URL}/storage/v1${sign.url.startsWith('/') ? '' : '/'}${sign.url}`;
+      return json(res, 200, { ok: true, uploadUrl: rel, publicUrl: `${SUPABASE_URL}/storage/v1/object/public/site-media/${objectPath}` });
+    }
     if (path === '/api/data' && method === 'GET') {
       const data = await getData();
       if (url.searchParams.get('scope') === 'admin') {

@@ -47,6 +47,8 @@ async function sendMail({ to, subject, html, text, replyTo }) {
 
 /* ---------- templates (table-based, inline styles: safe for Gmail / Outlook / mobile) ---------- */
 const LIME = '#c8ff3d', INK = '#0a0a0a', MUTED = '#6b6f66', LINE = '#e7e9e0';
+const SITE = String(process.env.SITE_URL || 'https://solid-dance-school.ziedaffes678.workers.dev').replace(/\/+$/, '');
+const LOGO = `${SITE}/assets/solid-dance-school-logo-dark.png`;
 const FONT = "'Helvetica Neue',Helvetica,Arial,sans-serif";
 const shell = ({ preheader = '', badge = '', title, intro = '', body = '', cta, ctaUrl, footer = '' }) => `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${esc(title)}</title></head>
 <body style="margin:0;padding:0;background:#eceee6;font-family:${FONT};color:${INK};-webkit-text-size-adjust:100%">
@@ -55,8 +57,7 @@ const shell = ({ preheader = '', badge = '', title, intro = '', body = '', cta, 
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px">
  <tr><td style="background:${INK};padding:22px 28px;border-radius:14px 14px 0 0">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-   <td style="font-family:${FONT};font-weight:900;font-size:20px;letter-spacing:.32em;color:${LIME}">SOLID</td>
-   <td align="right" style="font-family:${FONT};font-size:11px;letter-spacing:.2em;color:#9a9d94;text-transform:uppercase">Dance School</td>
+   <td><img src="${LOGO}" width="190" alt="SOLID Dance School" style="display:block;border:0;outline:none;height:auto;width:190px;max-width:100%;font-family:${FONT};font-weight:900;font-size:20px;letter-spacing:.3em;color:${LIME}"></td>
   </tr></table></td></tr>
  <tr><td style="background:${LIME};height:5px;line-height:5px;font-size:0">&nbsp;</td></tr>
  <tr><td style="background:#ffffff;padding:34px 28px 30px;border-left:1px solid ${LINE};border-right:1px solid ${LINE}">

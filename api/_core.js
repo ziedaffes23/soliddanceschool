@@ -252,6 +252,19 @@ function responseError(res, err) {
   json(res, status, { ok: false, error: status === 413 ? 'Request too large.' : status === 503 ? 'The service is not configured yet.' : status === 400 ? 'Invalid request body.' : 'The server could not complete that operation.' });
 }
 
+/* Delete uploaded media (bucket site-media) that the previous data used but the saved data no longer references. Best effort. */
+const MEDIA_RE = /\/storage\/v1\/object\/public\/site-media\/([A-Za-z0-9_\/.-]+)/g;
+function mediaPaths(obj) { const out = new Set(); const text = JSON.stringify(obj || {}); let m; MEDIA_RE.lastIndex = 0; while ((m = MEDIA_RE.exec(text))) out.add(m[1]); return out; }
+async function removeUnusedMedia(before, after) {
+  if (!SERVICE_KEY) return;
+  try {
+    const keep = mediaPaths({ ...after, _adminUsers: undefined });
+    const stale = [...mediaPaths({ ...before, _adminUsers: undefined })].filter(p => !keep.has(p) && p.startsWith('uploads/'));
+    if (!stale.length) return;
+    await fetch(`${SUPABASE_URL}/storage/v1/object/site-media`, { method: 'DELETE', headers: { apikey: SERVICE_KEY, ...(SERVICE_KEY.startsWith('eyJ') ? { Authorization: `Bearer ${SERVICE_KEY}` } : {}), 'content-type': 'application/json' }, body: JSON.stringify({ prefixes: stale }) });
+  } catch (e) { /* cleanup must never block saving */ }
+}
+
 async function handle(req, res) {
   try {
     const url = new URL(req.url, `https://${req.headers.host || 'localhost'}`);
@@ -333,6 +346,7 @@ async function handle(req, res) {
         const existing = await getData(); const seeded = await ensureAdminSeed(existing);
         const next = mergeAdminSave(seeded, body.data, body.known, actor.role);
         await putData(next);
+        await removeUnusedMedia(seeded, next);
         const out = { ...next }; delete out._adminUsers;
         return json(res, 200, { ok: true, rev: next._rev, merged: { registrations: out.registrations, notifications: out.notifications } });
       });

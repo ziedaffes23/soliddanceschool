@@ -3,8 +3,8 @@
 document.addEventListener('change',async e=>{const inp=e.target.closest('#heroFile');if(!inp||!inp.files[0])return;
 const st=document.querySelector('#heroUploadStatus'),f=inp.files[0],form=document.querySelector('#heroForm'),isVideo=/^video\//.test(f.type);
 inp.disabled=true;try{const url=await window.solidCloud.upload(f,m=>st.textContent=m);
-if(isVideo){form.elements.videoUrl.value=url;form.elements.type.value='video'}else{form.elements.imageUrl.value=url;form.elements.type.value='image'}
-form.elements.active.checked=true;st.textContent='Uploaded ✓ — now click “Save hero” to publish it.';st.style.color='var(--lime)'}
+const mine=v=>/\/storage\/v1\/object\/public\/site-media\//.test(v||'');if(isVideo){form.elements.videoUrl.value=url;form.elements.type.value='video'}else{if(mine(form.elements.videoUrl.value))form.elements.videoUrl.value='';form.elements.imageUrl.value=url;form.elements.type.value='image'}
+form.elements.active.checked=true;st.textContent='Uploaded ✓ — now click “Save hero” to publish it. The previous uploaded file is deleted automatically when you save.';st.style.color='var(--lime)'}
 catch(err){st.textContent='Upload failed: '+(err.message||err);st.style.color='var(--red)'}finally{inp.disabled=false;inp.value=''}});
 </script>
 <script src="/js/supabase-config.js"></script><script src="/js/supabase.js"></script><script src="/js/admin.js?v=solid13"></script><script>initAdmin('hero');</script></body></html>

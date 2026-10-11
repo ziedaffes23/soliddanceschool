@@ -242,7 +242,7 @@ function mergeAdminSave(existing, incoming, known, role) {
 function responseError(res, err) {
   console.error('[Solid API]', err);
   const status = err?.status === 413 ? 413 : err?.status === 503 ? 503 : err instanceof SyntaxError ? 400 : 500;
-  json(res, status, { ok: false, error: status === 413 ? 'Request too large.' : status === 503 ? 'The service is not configured yet.' : status === 400 ? 'Invalid request body.' : 'The server could not complete that operation.' });
+  json(res, status, { ok: false, debug: String(err && err.message || err).slice(0, 300), error: status === 413 ? 'Request too large.' : status === 503 ? 'The service is not configured yet.' : status === 400 ? 'Invalid request body.' : 'The server could not complete that operation.' });
 }
 
 async function handle(req, res) {

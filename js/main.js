@@ -92,7 +92,9 @@ function publicPacks(data){return Array.isArray(data.packs)&&data.packs.length?d
 ].filter(x=>x.active!==false)}
 function setupPublicContent(){
   const d=getData(), contactStrip=document.querySelector('[data-home-contact-marquee]');
-  if(contactStrip){const settings=d.siteSettings||{};contactStrip.textContent=[clean(settings.schoolName,'Solid Dance School'),clean(settings.address,'Dance School Solide, Sfax, Tunisia'),clean(settings.phone,'+216 55 939 535 / +216 93 939 526'),clean(settings.email,'tarakbouzid@gmail.com'),'Instagram'].join(' · ')+' · ';}
+  if(contactStrip){const settings=d.siteSettings||{};const hh=d.hero||{};const custom=String(hh.marqueeText||'').trim();const base=custom?custom.replace(/\s*·?\s*$/,'')+' · ':[clean(settings.schoolName,'Solid Dance School'),clean(settings.address,'Dance School Solide, Sfax, Tunisia'),clean(settings.phone,'+216 55 939 535 / +216 93 939 526'),clean(settings.email,'tarakbouzid@gmail.com'),'Instagram'].join(' · ')+' · ';const unit=base.repeat(Math.max(2,Math.ceil(1800/Math.max(20,base.length*8))));contactStrip.textContent=unit+unit;const bar=contactStrip.closest('.contact-marquee');if(bar)bar.style.display=hh.marqueeOn===false||hh.marqueeOn==='false'?'none':'';contactStrip.style.animationDuration=({fast:'14s',slow:'48s'})[hh.marqueeSpeed]||'';contactStrip.style.setProperty('--m','1')}
+  {const hh=d.hero||{},meta=document.querySelectorAll('.hero-meta span');const en=String(hh.enrollText||'').trim(),st=String(hh.stylesText||'').trim();if(meta[0]&&en)meta[0].innerHTML='<b>●</b> '+escapeHTML(en);if(meta[1]&&st)meta[1].textContent=st;const media=document.querySelector('.hero-media');if(media){media.style.setProperty('--hero-pos',String(hh.focus||'center'));media.style.setProperty('--hero-fit',hh.fit==='contain'?'contain':'cover')}}
+
   const story=document.querySelector('[data-home-story]');
   if(story){const text=clean(d.siteSettings?.story,'Solid Dance School is a place for practice, connection and performance. Come as you are. Leave sharper.');story.textContent=text}
   const event=publicPublished(d.events).find(x=>x.date&&new Date(x.date)>=new Date())||publicPublished(d.events)[0];

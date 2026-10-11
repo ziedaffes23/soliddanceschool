@@ -536,3 +536,4 @@ a.index-row:hover .num,a.index-row:hover .arrow,a.index-row:hover .arrow span{co
 /* Settings → Image mode "original color": show every photo/video in full colour */
 body.images-color img:not(.logo),body.images-color video,body.images-color iframe:not(.map-embed),body.images-color .hero-media *,body.images-color .u-media img,body.images-color .teacher-portrait img,body.images-color .gallery-item img{filter:none!important}
 body.images-color .u-media::after,body.images-color .hero-media::after{mix-blend-mode:normal}
+.hero-media img,.hero-media video{object-fit:var(--hero-fit,cover);object-position:var(--hero-pos,center)}

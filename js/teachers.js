@@ -9,7 +9,7 @@ function initTeachers(){
     const styles=invalid(t.styles)?'Contemporary · Hip Hop · Movement':t.styles;
     const bio=invalid(t.bio)?'A teaching team dedicated to technique, musicality and confident expression.':t.bio;
     const image=invalid(t.imageurl)?(invalid(t.imageUrl)?'':t.imageUrl):t.imageurl;
-    const portrait=image?`<img class="teacher-image" src="${escapeHTML(image)}" alt="${escapeHTML(t.alt||t.altText||name)}" onload="this.nextElementSibling.hidden=true;this.nextElementSibling.style.display='none'" onerror="this.remove();this.nextElementSibling.hidden=false;this.nextElementSibling.style.display='grid'">`:'';
+    const portrait=image?`<img class="teacher-image" src="${escapeHTML(directImageUrl(image))}" referrerpolicy="no-referrer" alt="${escapeHTML(t.alt||t.altText||name)}" onload="this.nextElementSibling.hidden=true;this.nextElementSibling.style.display='none'" onerror="this.remove();this.nextElementSibling.hidden=false;this.nextElementSibling.style.display='grid'">`:'';
     return `<article class="teacher-feature"><div class="teacher-portrait">${portrait}<div class="portrait-fallback" ${image?'hidden':''}>SOLID<br>FACULTY</div></div><div class="teacher-copy"><div class="eyebrow">${String(i+1).padStart(2,'0')} / Faculty</div><h2>${escapeHTML(name)}</h2><div class="meta"><span class="tag">${escapeHTML(styles)}</span></div><p>${escapeHTML(bio)}</p></div></article>`;
   }).join('');
 }

@@ -1,0 +1,26 @@
+# Not part of the deployed site — kept out so they're never served as
+# public static files. The real API now lives in api/[...path].js, which
+# is a serverless-function equivalent of server.js (used instead for any
+# host that runs it as a persistent process, e.g. Docker).
+server.js
+api/google-apps-script.gs
+supabase/
+create-assets.js
+Dockerfile
+README.md
+CLOUDFLARE_DEPLOYMENT_GUIDE.md
+SUPABASE_SETUP.md
+TODO.md
+plan.md
+assets/ASSETS_SPEC.md
+.env.example
+app.config.ts
+manus-routes.json
+netlify.toml
+_headers
+logo.svg
+.github/
+functions/
+scripts/
+wrangler.toml
+dist/

@@ -1,4 +1,5 @@
 // Email sending + templates (French) for Solid Dance School. Provider is chosen by environment variables:
+//   APPS_SCRIPT_URL + APPS_SCRIPT_SECRET — send from your own Gmail through a Google Apps Script web app (google-apps-script/Mail.gs)
 //   BREVO_API_KEY  (+ MAIL_FROM = a sender address verified in Brevo)   — recommended, free tier, no domain needed
 //   RESEND_API_KEY (+ MAIL_FROM = an address on a domain verified in Resend)
 const esc = (s = '') => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -8,6 +9,7 @@ const shortDate = iso => { if (!iso) return '—'; const d = new Date(`${String(
 
 function config() {
   const env = process.env, from = (env.MAIL_FROM || '').trim(), name = (env.MAIL_FROM_NAME || 'Solid Dance School').trim();
+  if (env.APPS_SCRIPT_URL && env.APPS_SCRIPT_SECRET) return { provider: 'google-apps-script', url: env.APPS_SCRIPT_URL, key: env.APPS_SCRIPT_SECRET, from: from || 'your Google account', name };
   if (env.BREVO_API_KEY && from) return { provider: 'brevo', key: env.BREVO_API_KEY, from, name };
   if (env.RESEND_API_KEY && from) return { provider: 'resend', key: env.RESEND_API_KEY, from, name };
   return { provider: null, from, name };
@@ -17,11 +19,19 @@ const validEmail = e => /^[^\s@<>"',;]+@[^\s@<>"',;]+\.[^\s@<>"',;]+$/.test(Stri
 
 async function sendMail({ to, subject, html, text, replyTo }) {
   const cfg = config(); const list = (Array.isArray(to) ? to : String(to || '').split(/[,;]/)).map(x => x.trim()).filter(validEmail);
-  if (!cfg.provider) return { ok: false, error: 'Email is not configured (missing BREVO_API_KEY / MAIL_FROM).' };
+  if (!cfg.provider) return { ok: false, error: 'Email is not configured (set APPS_SCRIPT_URL + APPS_SCRIPT_SECRET, or BREVO_API_KEY + MAIL_FROM).' };
   if (!list.length) return { ok: false, error: 'No valid recipient address.' };
   try {
     const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), 9000);
     let res;
+    if (cfg.provider === 'google-apps-script') {
+      res = await fetch(cfg.url, { method: 'POST', signal: ctl.signal, redirect: 'follow', headers: { 'content-type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ secret: cfg.key, to: list.join(','), subject, html, text, name: cfg.name, replyTo: replyTo && validEmail(replyTo) ? replyTo : '' }) });
+      clearTimeout(timer);
+      const t = await res.text().catch(() => ''); let j = {}; try { j = JSON.parse(t); } catch (e) { /* not JSON */ }
+      if (!res.ok || !j.ok) return { ok: false, error: `Google Apps Script error: ${(j.error || t.replace(/<[^>]*>/g, ' ').trim()).slice(0, 200) || res.status}` };
+      return { ok: true };
+    }
     if (cfg.provider === 'brevo') {
       res = await fetch((process.env.BREVO_API_URL || 'https://api.brevo.com/v3/smtp/email'), { method: 'POST', signal: ctl.signal, headers: { 'api-key': cfg.key, 'content-type': 'application/json', accept: 'application/json' },
         body: JSON.stringify({ sender: { name: cfg.name, email: cfg.from }, to: list.map(email => ({ email })), subject, htmlContent: html, textContent: text, ...(replyTo && validEmail(replyTo) ? { replyTo: { email: replyTo } } : {}) }) });

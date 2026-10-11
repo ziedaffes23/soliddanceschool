@@ -155,3 +155,51 @@ body[data-admin] .fiche-table select{border:1px solid #bbb}
 .class-list{border:1px solid var(--panel-line);background:var(--black);padding:20px;margin-bottom:16px}
 .class-list h3{font-size:22px;margin:0 0 4px}
 .class-list p{color:var(--grey);font-size:13px;margin:0 0 12px}
+
+/* ===== Student workspace (profile + payments in one place) ===== */
+.ops-modal.profile{padding:3vh 16px}
+.ops-modal.profile .ops-modal-card{max-width:1120px;padding:0;background:var(--black);border:1px solid var(--panel-line)}
+.pf-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:26px 30px;border-bottom:1px solid var(--panel-line);background:linear-gradient(135deg,rgba(200,255,61,.08),transparent 60%),var(--panel);position:sticky;top:0;z-index:2}
+.pf-head .profile-name{font-size:clamp(26px,3.4vw,38px);text-transform:uppercase;margin:2px 0 10px}
+.pf-head .profile-statuses{margin:0}
+.pf-layout{display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;padding:24px 30px 34px;align-items:start}
+.pf-side,.pf-main{display:flex;flex-direction:column;gap:16px;min-width:0}
+.pf-card{background:var(--panel);border:1px solid var(--panel-line);padding:20px}
+.pf-card h4{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--lime);margin:0 0 14px;font-weight:600}
+.pf-dl{display:grid;gap:12px;margin:0}
+.pf-dl div{display:grid;gap:2px}
+.pf-dl dt{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey)}
+.pf-dl dd{margin:0;font-size:14.5px;overflow-wrap:anywhere}
+.pf-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.pf-card .pf-row:first-child{margin-top:0}
+.pf-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--panel-line);border:1px solid var(--panel-line)}
+.pf-kpis>div{background:var(--panel);padding:16px 18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.pf-kpis small{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey)}
+.pf-kpis strong{font-family:var(--font-display);font-size:24px;line-height:1;overflow-wrap:anywhere}
+.pf-kpis .k-paid strong{color:var(--lime)}
+.pf-kpis .k-left strong{color:#e8c547}
+.pf-progress{height:8px;background:var(--panel);border:1px solid var(--panel-line);margin-top:-4px}
+.pf-progress span{display:block;height:100%;background:var(--lime);transition:width .4s}
+.pf-progress-label{font-family:var(--font-mono);font-size:11.5px;color:var(--paper-dim);margin:-6px 0 0}
+.pf-form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.pf-f{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pf-f span{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey)}
+.pf-f input,.pf-f select{width:100%;background:var(--black);border:1px solid var(--panel-line);color:var(--paper);padding:11px 12px;font-size:14px}
+.pf-f input:focus,.pf-f select:focus{border-color:var(--lime);outline:0}
+.pf-wide{grid-column:1/-1}
+.pf-pays{display:flex;flex-direction:column;gap:8px}
+.pf-pay{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;background:var(--black);border:1px solid var(--panel-line);border-left:3px solid #e8c547;padding:12px 14px}
+.pf-pay.is-paid{border-left-color:var(--lime)}
+.pf-pay-main{display:flex;flex-direction:column;gap:2px;min-width:0}
+.pf-pay-main strong{font-family:var(--font-display);font-size:18px}
+.pf-pay-main span{font-size:12.5px;color:var(--grey);overflow-wrap:anywhere}
+.pf-pay-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.pf-pay-actions .admin-btn{padding:7px 10px;font-size:10.5px}
+.pf-empty{color:var(--grey);font-size:13.5px;margin:0}
+.pf-plan-sum{display:flex;gap:18px;flex-wrap:wrap;font-family:var(--font-mono);font-size:12px;color:var(--paper-dim);margin-bottom:12px}
+.pf-plan-sum b{color:var(--lime)}
+.pf-card .fiche-table{background:#fff;margin-top:6px}
+.pf-card .fiche-table-note{color:var(--grey)}
+.pf-card .payment-schedule-web,.pf-card>.fiche-table-note+.fiche-table{overflow-x:auto;display:block}
+.pf-card .ops-history{max-height:260px}
+@media (max-width:900px){.pf-layout{grid-template-columns:1fr;padding:18px 16px 28px}.pf-head{padding:18px 16px}.pf-kpis{grid-template-columns:1fr 1fr}.pf-form{grid-template-columns:1fr 1fr}.pf-pay{grid-template-columns:1fr auto}.pf-pay-actions{grid-column:1/-1;justify-content:flex-start}}

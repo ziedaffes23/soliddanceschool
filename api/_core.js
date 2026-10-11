@@ -163,7 +163,7 @@ const safeUser = u => ({ id: u.id, username: u.username, role: u.role, createdAt
 
 /* ---------- passwords ---------- */
 function hashPassword(password) {
-  const salt = crypto.randomBytes(16).toString('base64url'); const iterations = 210000;
+  const salt = crypto.randomBytes(16).toString('base64url'); const iterations = 100000; // Cloudflare Workers cap PBKDF2 at 100k rounds
   const digest = crypto.pbkdf2Sync(password, salt, iterations, 32, 'sha256').toString('base64url');
   return `pbkdf2$${iterations}$${salt}$${digest}`;
 }
@@ -172,7 +172,7 @@ function verifyPassword(password, stored) {
   if (/^[a-f0-9]{64}$/i.test(stored)) return safeEqual(crypto.createHash('sha256').update(password).digest('hex'), stored);
   const [kind, iterations, salt, expected] = String(stored).split('$');
   if (kind !== 'pbkdf2' || !iterations || !salt || !expected) return false;
-  return safeEqual(crypto.pbkdf2Sync(password, salt, Number(iterations), 32, 'sha256').toString('base64url'), expected);
+  try { return safeEqual(crypto.pbkdf2Sync(password, salt, Number(iterations), 32, 'sha256').toString('base64url'), expected); } catch { return false; }
 }
 const validateUsername = u => /^[a-zA-Z0-9._-]{3,32}$/.test(u);
 const validateRole = r => (r === 'manager' ? 'manager' : 'admin');
@@ -187,7 +187,7 @@ async function authUser(username, password) {
     const users = data._adminUsers || [];
     const user = users.find(x => x.username.toLowerCase() === String(username || '').trim().toLowerCase() && x.active !== false);
     // Always burn comparable time so unknown usernames can't be told apart by latency.
-    if (!user) { verifyPassword(String(password || ''), 'pbkdf2$210000$x$x'); return null; }
+    if (!user) { verifyPassword(String(password || ''), 'pbkdf2$100000$x$x'); return null; }
     if (!verifyPassword(String(password || ''), user.passwordHash)) return null;
     let dirty = false;
     if (/^[a-f0-9]{64}$/i.test(user.passwordHash)) {
@@ -242,7 +242,7 @@ function mergeAdminSave(existing, incoming, known, role) {
 function responseError(res, err) {
   console.error('[Solid API]', err);
   const status = err?.status === 413 ? 413 : err?.status === 503 ? 503 : err instanceof SyntaxError ? 400 : 500;
-  json(res, status, { ok: false, debug: String(err && err.message || err).slice(0, 300), error: status === 413 ? 'Request too large.' : status === 503 ? 'The service is not configured yet.' : status === 400 ? 'Invalid request body.' : 'The server could not complete that operation.' });
+  json(res, status, { ok: false, error: status === 413 ? 'Request too large.' : status === 503 ? 'The service is not configured yet.' : status === 400 ? 'Invalid request body.' : 'The server could not complete that operation.' });
 }
 
 async function handle(req, res) {

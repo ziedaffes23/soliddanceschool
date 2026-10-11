@@ -45,27 +45,75 @@ async function sendMail({ to, subject, html, text, replyTo }) {
   } catch (e) { return { ok: false, error: 'Mail request failed: ' + (e.name === 'AbortError' ? 'timeout' : e.message) }; }
 }
 
-/* ---------- templates ---------- */
-const shell = (title, body, footer = '') => `<!doctype html><html><body style="margin:0;background:#f2f2ec;font-family:Arial,Helvetica,sans-serif;color:#111"><div style="max-width:600px;margin:0 auto;padding:24px"><div style="background:#0a0a0a;color:#c8ff3d;padding:18px 24px;font-weight:800;letter-spacing:.14em;font-size:15px">SOLID DANCE SCHOOL</div><div style="background:#fff;padding:28px 24px;border:1px solid #ddd;border-top:0"><h1 style="font-size:22px;margin:0 0 16px">${esc(title)}</h1>${body}</div><div style="padding:14px 4px;font-size:12px;color:#666">${footer}</div></div></body></html>`;
-const rowsHtml = rows => `<table style="width:100%;border-collapse:collapse;margin:8px 0 4px">${rows.filter(r => r[1] !== undefined && r[1] !== '').map(([k, v]) => `<tr><td style="padding:8px 10px;border-bottom:1px solid #eee;color:#666;width:38%;font-size:13px">${esc(k)}</td><td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:14px"><b>${esc(v)}</b></td></tr>`).join('')}</table>`;
-const rowsText = rows => rows.filter(r => r[1] !== undefined && r[1] !== '').map(([k, v]) => `${k}: ${v}`).join('\n');
+/* ---------- templates (table-based, inline styles: safe for Gmail / Outlook / mobile) ---------- */
+const LIME = '#c8ff3d', INK = '#0a0a0a', MUTED = '#6b6f66', LINE = '#e7e9e0';
+const FONT = "'Helvetica Neue',Helvetica,Arial,sans-serif";
+const shell = ({ preheader = '', badge = '', title, intro = '', body = '', cta, ctaUrl, footer = '' }) => `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${esc(title)}</title></head>
+<body style="margin:0;padding:0;background:#eceee6;font-family:${FONT};color:${INK};-webkit-text-size-adjust:100%">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">${esc(preheader)}&#8204;&nbsp;&#8204;&nbsp;&#8204;&nbsp;</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eceee6"><tr><td align="center" style="padding:28px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px">
+ <tr><td style="background:${INK};padding:22px 28px;border-radius:14px 14px 0 0">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+   <td style="font-family:${FONT};font-weight:900;font-size:20px;letter-spacing:.32em;color:${LIME}">SOLID</td>
+   <td align="right" style="font-family:${FONT};font-size:11px;letter-spacing:.2em;color:#9a9d94;text-transform:uppercase">Dance School</td>
+  </tr></table></td></tr>
+ <tr><td style="background:${LIME};height:5px;line-height:5px;font-size:0">&nbsp;</td></tr>
+ <tr><td style="background:#ffffff;padding:34px 28px 30px;border-left:1px solid ${LINE};border-right:1px solid ${LINE}">
+  ${badge ? `<div style="display:inline-block;background:${INK};color:${LIME};font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:6px 12px;border-radius:99px;margin:0 0 16px">${esc(badge)}</div>` : ''}
+  <h1 style="margin:0 0 12px;font-family:${FONT};font-size:28px;line-height:1.15;font-weight:900;letter-spacing:-.01em;color:${INK}">${esc(title)}</h1>
+  ${intro ? `<p style="margin:0 0 22px;font-size:15px;line-height:1.6;color:#33362f">${intro}</p>` : ''}
+  ${body}
+  ${cta && ctaUrl ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:26px 0 0"><tr><td style="background:${INK};border-radius:10px"><a href="${esc(ctaUrl)}" style="display:inline-block;padding:14px 26px;font-family:${FONT};font-size:14px;font-weight:700;color:${LIME};text-decoration:none;letter-spacing:.04em">${esc(cta)} &rarr;</a></td></tr></table>` : ''}
+ </td></tr>
+ <tr><td style="background:#f7f8f3;padding:18px 28px;border:1px solid ${LINE};border-top:0;border-radius:0 0 14px 14px;font-size:12px;line-height:1.6;color:${MUTED}">${footer || 'Solid Dance School'}</td></tr>
+</table>
+<p style="margin:14px 0 0;font-size:11px;color:#9a9d94;font-family:${FONT}">Message automatique envoyé par le site Solid Dance School.</p>
+</td></tr></table></body></html>`;
+
+const rowsHtml = rows => { const r = rows.filter(x => x[1] !== undefined && x[1] !== null && x[1] !== '' && x[1] !== '—'); if (!r.length) return '';
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ${LINE};border-radius:12px;border-collapse:separate;overflow:hidden;background:#fbfbf8;margin:0 0 6px">${r.map(([k, v], i) => `<tr><td style="padding:12px 16px;${i ? `border-top:1px solid ${LINE};` : ''}font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:${MUTED};width:38%;vertical-align:top">${esc(k)}</td><td style="padding:12px 16px;${i ? `border-top:1px solid ${LINE};` : ''}font-size:15px;font-weight:700;color:${INK};vertical-align:top">${esc(v)}</td></tr>`).join('')}</table>`; };
+const rowsText = rows => rows.filter(r => r[1] !== undefined && r[1] !== null && r[1] !== '').map(([k, v]) => `${k}: ${v}`).join('\n');
+const amountCard = (label, amount, sub) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${INK};border-radius:14px;margin:0 0 18px"><tr><td style="padding:22px 24px"><div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9a9d94">${esc(label)}</div><div style="font-family:${FONT};font-size:38px;line-height:1.1;font-weight:900;color:${LIME};margin:6px 0 2px">${esc(amount)}</div>${sub ? `<div style="font-size:13px;color:#d3d6cb">${esc(sub)}</div>` : ''}</td></tr></table>`;
 
 function ownerNewRegistration(r, adminUrl) {
   const rows = [['Élève', r.name], ['Naissance', r.dob || r.birthInfo], ['Style de danse', r.danceStyle], ['Cours', r.class || r.className], ['Père / tuteur', [r.fatherName || r.parentName, r.fatherPhone || r.parentPhone].filter(Boolean).join(' · ')], ['Email', r.email || r.fatherEmail], ['Mère', [r.motherName, r.motherPhone].filter(Boolean).join(' · ')], ['Adresse', r.address || r.fatherAddress], ['Message', r.message || r.comment]];
-  return { subject: `Nouvelle inscription — ${r.name || 'Sans nom'}`, html: shell('Nouvelle inscription reçue', `<p style="margin:0 0 12px">Une nouvelle inscription vient d’arriver sur le site.</p>${rowsHtml(rows)}<p style="margin:18px 0 0"><a href="${esc(adminUrl)}" style="background:#c8ff3d;color:#000;padding:11px 18px;text-decoration:none;font-weight:700;font-size:13px">Ouvrir l’espace admin</a></p>`), text: `Nouvelle inscription\n\n${rowsText(rows)}\n\nAdmin: ${adminUrl}` };
+  return { subject: `Nouvelle inscription — ${r.name || 'Sans nom'}`,
+    html: shell({ preheader: `${r.name || 'Un nouvel élève'} vient de s’inscrire.`, badge: 'Nouvelle inscription', title: r.name || 'Nouvel élève', intro: 'Une nouvelle inscription vient d’arriver sur le site. Voici les détails à traiter :', body: rowsHtml(rows), cta: 'Ouvrir l’espace admin', ctaUrl: adminUrl, footer: 'Pensez à affecter l’élève à un cours et à enregistrer son premier paiement.' }),
+    text: `Nouvelle inscription\n\n${rowsText(rows)}\n\nAdmin: ${adminUrl}` };
 }
 function ownerPayment(items, adminUrl) {
+  const one = items.length === 1 ? items[0] : null;
   const lines = items.map(i => [`${i.name}${i.className ? ' · ' + i.className : ''}`, `${money(i.amount)} · ${i.method || '—'} · ${shortDate(i.date)}${i.remaining > 0 ? ` · reste ${money(i.remaining)}` : ' · soldé'}`]);
-  return { subject: items.length === 1 ? `Paiement reçu — ${items[0].name} (${money(items[0].amount)})` : `${items.length} paiements reçus`, html: shell('Paiement enregistré', `${rowsHtml(lines)}${items.length === 1 ? rowsHtml([['Total convenu', money(items[0].total)], ['Déjà payé', money(items[0].paid)], ['Reste à payer', money(items[0].remaining)], ['Téléphone', items[0].phone], ['Email', items[0].email]]) : ''}<p style="margin:18px 0 0"><a href="${esc(adminUrl)}" style="background:#c8ff3d;color:#000;padding:11px 18px;text-decoration:none;font-weight:700;font-size:13px">Voir les paiements</a></p>`), text: `Paiement(s) enregistré(s)\n\n${rowsText(lines)}\n\n${adminUrl}` };
+  const total = items.reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const body = (one ? amountCard('Montant reçu', money(one.amount), `${one.method || 'Paiement'} · ${shortDate(one.date)}`) + rowsHtml([['Élève', one.name], ['Cours', one.className], ['Total convenu', money(one.total)], ['Déjà payé', money(one.paid)], ['Reste à payer', one.remaining > 0 ? money(one.remaining) : 'Soldé ✓'], ['Téléphone', one.phone], ['Email', one.email]])
+    : amountCard('Total reçu', money(total), `${items.length} paiements`) + rowsHtml(lines));
+  return { subject: one ? `Paiement reçu — ${one.name} (${money(one.amount)})` : `${items.length} paiements reçus`,
+    html: shell({ preheader: one ? `${money(one.amount)} reçu de ${one.name}.` : `${items.length} paiements enregistrés.`, badge: 'Paiement enregistré', title: one ? one.name : 'Nouveaux paiements', intro: one ? 'Un paiement vient d’être enregistré dans l’espace admin.' : 'Plusieurs paiements viennent d’être enregistrés.', body, cta: 'Voir les paiements', ctaUrl: adminUrl }),
+    text: `Paiement(s) enregistré(s)\n\n${rowsText(lines)}\n\n${adminUrl}` };
 }
 function parentReminder(x, school) {
-  const who = x.parentName || x.name, rows = [['Élève', x.name], ['Cours', x.className], ['Montant à régler', money(x.amount)], ['Échéance', frDate(x.dueDate)], ['Reste total à payer', money(x.remaining)]];
-  const contact = [school.phone, school.email].filter(Boolean).join(' · ');
-  return { subject: `Rappel de paiement — échéance ${x.when || 'demain'} (${shortDate(x.dueDate)})`, html: shell('Rappel de paiement', `<p style="margin:0 0 12px">Bonjour ${esc(who)},</p><p style="margin:0 0 12px">Nous vous rappelons qu’un paiement est prévu <b>${esc(x.when || 'demain')}</b> pour l’inscription de <b>${esc(x.name)}</b> à Solid Dance School.</p>${rowsHtml(rows)}<p style="margin:16px 0 0;font-size:14px">Vous pouvez régler directement à l’école. Si le paiement a déjà été effectué, merci d’ignorer ce message.</p><p style="margin:14px 0 0;font-size:14px">Merci et à bientôt,<br><b>L’équipe Solid Dance School</b></p>`, `${esc(contact)}`), text: `Bonjour ${who},\n\nRappel : un paiement est prévu ${x.when || 'demain'} pour l'inscription de ${x.name}.\n\n${rowsText(rows)}\n\nSi le paiement a déjà été effectué, merci d'ignorer ce message.\n\nSolid Dance School${contact ? '\n' + contact : ''}` };
+  const who = x.parentName || x.name, when = x.when || 'demain';
+  const rows = [['Élève', x.name], ['Cours', x.className], ['Échéance', frDate(x.dueDate)], ['Reste total à payer', money(x.remaining)]];
+  const contact = [school.phone, school.email].filter(Boolean).map(esc).join(' &nbsp;·&nbsp; ');
+  return { subject: `Rappel de paiement — échéance ${when} (${shortDate(x.dueDate)})`,
+    html: shell({ preheader: `Un paiement de ${money(x.amount)} est prévu ${when} pour ${x.name}.`, badge: 'Rappel de paiement', title: `Échéance ${when}`, intro: `Bonjour <b>${esc(who)}</b>,<br>nous vous rappelons qu’un paiement est prévu <b>${esc(when)}</b> pour l’inscription de <b>${esc(x.name)}</b> à Solid Dance School.`,
+      body: amountCard('Montant à régler', money(x.amount), `avant le ${frDate(x.dueDate)}`) + rowsHtml(rows) + `<p style="margin:18px 0 0;font-size:14px;line-height:1.6;color:#33362f">Le règlement s’effectue directement à l’école. Si le paiement a déjà été effectué, merci d’ignorer ce message.</p><p style="margin:14px 0 0;font-size:14px;line-height:1.6">Merci et à très bientôt,<br><b>L’équipe Solid Dance School</b></p>`,
+      footer: contact ? `Une question ? Contactez-nous : ${contact}` : 'Solid Dance School' }),
+    text: `Bonjour ${who},\n\nRappel : un paiement de ${money(x.amount)} est prévu ${when} pour l'inscription de ${x.name}.\n\n${rowsText(rows)}\n\nSi le paiement a déjà été effectué, merci d'ignorer ce message.\n\nSolid Dance School${school.phone || school.email ? '\n' + [school.phone, school.email].filter(Boolean).join(' · ') : ''}` };
 }
 function ownerDigest(sent, missing, failed, today) {
-  const li = a => a.map(x => `<li>${esc(x)}</li>`).join('');
-  return { subject: `Rappels de paiement envoyés (${sent.length}) — ${shortDate(today)}`, html: shell('Rappels de paiement du jour', `<p style="margin:0 0 10px"><b>${sent.length}</b> rappel(s) envoyé(s) aux parents pour les échéances de demain.</p>${sent.length ? `<ul style="margin:0 0 12px;padding-left:18px;font-size:14px">${li(sent)}</ul>` : ''}${missing.length ? `<p style="margin:12px 0 6px;color:#b3261e"><b>Sans adresse email (à contacter par téléphone) :</b></p><ul style="margin:0;padding-left:18px;font-size:14px">${li(missing)}</ul>` : ''}${failed.length ? `<p style="margin:12px 0 6px;color:#b3261e"><b>Échecs d’envoi :</b></p><ul style="margin:0;padding-left:18px;font-size:14px">${li(failed)}</ul>` : ''}`), text: `Rappels envoyés: ${sent.join(', ') || 'aucun'}\nSans email: ${missing.join(', ') || '—'}\nÉchecs: ${failed.join(', ') || '—'}` };
+  const li = a => `<ul style="margin:0 0 6px;padding-left:20px;font-size:14px;line-height:1.8">${a.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+  const block = (t, a, color) => a.length ? `<p style="margin:16px 0 4px;font-size:13px;font-weight:700;color:${color}">${esc(t)}</p>${li(a)}` : '';
+  return { subject: `Rappels de paiement envoyés (${sent.length}) — ${shortDate(today)}`,
+    html: shell({ preheader: `${sent.length} rappel(s) envoyé(s) aux parents.`, badge: 'Récapitulatif du jour', title: `${sent.length} rappel${sent.length > 1 ? 's' : ''} envoyé${sent.length > 1 ? 's' : ''}`, intro: 'Rappels de paiement envoyés aux parents pour les échéances de demain.',
+      body: block('Envoyés', sent, '#1b7a2f') + block('Sans adresse email — à contacter par téléphone', missing, '#b3261e') + block('Échecs d’envoi', failed, '#b3261e') }),
+    text: `Rappels envoyés: ${sent.join(', ') || 'aucun'}\nSans email: ${missing.join(', ') || '—'}\nÉchecs: ${failed.join(', ') || '—'}` };
+}
+function testMail() {
+  return { subject: 'Test — Solid Dance School',
+    html: shell({ preheader: 'Les emails du site fonctionnent.', badge: 'Test', title: 'Tout fonctionne ✓', intro: 'Les emails du site Solid Dance School sont bien configurés. Vous recevrez ici les nouvelles inscriptions et les paiements.' }),
+    text: 'Les emails du site Solid Dance School fonctionnent.' };
 }
 
-module.exports = { sendMail, isConfigured, config, validEmail, ownerNewRegistration, ownerPayment, parentReminder, ownerDigest, money };
+module.exports = { sendMail, isConfigured, config, validEmail, ownerNewRegistration, ownerPayment, parentReminder, ownerDigest, testMail, money };

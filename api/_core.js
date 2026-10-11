@@ -394,7 +394,7 @@ async function handle(req, res) {
       const data = await getData(); const to = ownerAddress(data);
       if (!mail.isConfigured()) return json(res, 400, { ok: false, error: 'Email is not configured yet: add APPS_SCRIPT_URL + APPS_SCRIPT_SECRET (Gmail) or BREVO_API_KEY + MAIL_FROM in the hosting settings.' });
       if (!to) return json(res, 400, { ok: false, error: 'Set the owner email address first.' });
-      const r = await mail.sendMail({ to, subject: 'Test — Solid Dance School', html: '<p>✅ Les emails du site Solid Dance School fonctionnent. Vous recevrez ici les nouvelles inscriptions et les paiements.</p>', text: 'Les emails du site Solid Dance School fonctionnent.' });
+      const r = await mail.sendMail({ to, ...mail.testMail() });
       return json(res, r.ok ? 200 : 502, r.ok ? { ok: true, to } : { ok: false, error: r.error });
     }
     if (path === '/api/send-reminders' && method === 'POST') {

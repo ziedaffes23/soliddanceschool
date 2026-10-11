@@ -27,6 +27,9 @@
 </main></div>
 <div class="toast"></div>
 <script>
+function portraitBad(v){return /^https?:\/\/([\w.-]+\.)?(facebook\.com|fb\.com|fb\.watch|instagram\.com)\//i.test(String(v||'').trim())}
+document.addEventListener('submit',e=>{const f=e.target.closest('[data-crud-form]');if(!f||!f.elements.imageurl)return;
+if(portraitBad(f.elements.imageurl.value)){e.preventDefault();e.stopImmediatePropagation();f.elements.imageurl.value='';f.elements.imageurl.focus();alert('That is a Facebook/Instagram page link, not a picture, so it cannot be displayed. The field was cleared: use "Or upload a photo" instead (save the photo to your phone/computer first).')}},true);
 document.addEventListener('change',e=>{const inp=e.target.closest('[data-portrait-upload]');if(!inp||!inp.files[0])return;
 const f=inp.files[0],img=new Image(),url=URL.createObjectURL(f);
 img.onload=()=>{const max=800,k=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);

@@ -227,7 +227,7 @@
             const w = document.createElement('span');
             w.className = 'sx-word';
             w.setAttribute('aria-hidden', 'true');
-            Array.from(tok).forEach(c => {
+            (/[\u0600-\u06FF]/.test(tok) ? [tok] : Array.from(tok)).forEach(c => {
               const ch = document.createElement('span');
               ch.className = 'sx-ch';
               ch.style.setProperty('--ci', ci++);

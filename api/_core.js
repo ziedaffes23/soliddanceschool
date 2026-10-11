@@ -188,6 +188,13 @@ async function authUser(username, password) {
     const user = users.find(x => x.username.toLowerCase() === String(username || '').trim().toLowerCase() && x.active !== false);
     // Always burn comparable time so unknown usernames can't be told apart by latency.
     if (!user) { verifyPassword(String(password || ''), 'pbkdf2$100000$x$x'); return null; }
+    // Owner recovery: a temporary password supplied as the ADMIN_RESET_PASSWORD secret re-arms the account
+    // (forces a new password at login). Remove the secret once you are back in.
+    const reset = process.env.ADMIN_RESET_PASSWORD || '';
+    if (user.role === 'admin' && reset.length >= 10 && safeEqual(String(password || ''), reset) && !verifyPassword(String(password || ''), user.passwordHash)) {
+      user.passwordHash = hashPassword(reset); user.mustChange = true; user.updatedAt = new Date().toISOString();
+      await putData(data); return user;
+    }
     if (!verifyPassword(String(password || ''), user.passwordHash)) return null;
     let dirty = false;
     if (/^[a-f0-9]{64}$/i.test(user.passwordHash)) {

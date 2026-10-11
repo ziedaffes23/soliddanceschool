@@ -1,6 +1,7 @@
 // Shared API core used by both the Vercel function (api/[...path].js) and the
 // standalone Node server (server.js). Files starting with "_" are not routed by Vercel.
 const crypto = require('node:crypto');
+const mail = require('./_mail.js');
 
 const SUPABASE_URL = (process.env.SUPABASE_URL || 'https://pnoqggozzybcxfvwjmsr.supabase.co').replace(/\/rest\/v1\/?$/, '').replace(/\/$/, '');
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -265,6 +266,81 @@ async function removeUnusedMedia(before, after) {
   } catch (e) { /* cleanup must never block saving */ }
 }
 
+
+/* ---------- email notifications & payment reminders ---------- */
+const TZ = 'Africa/Tunis';
+const tunisToday = () => new Date().toLocaleDateString('en-CA', { timeZone: TZ });
+const addDaysIso = (iso, n) => { const d = new Date(`${iso}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+const dayDiff = (a, b) => Math.round((new Date(`${a}T12:00:00Z`) - new Date(`${b}T12:00:00Z`)) / 86400000);
+const mailPrefs = data => Object.assign({ ownerEmail: '', notifyRegistrations: true, notifyPayments: true, remindersOn: true }, (data && data.mailSettings) || {});
+const ownerAddress = data => process.env.OWNER_EMAIL || mailPrefs(data).ownerEmail || (data.siteSettings && data.siteSettings.email) || '';
+const paidSum = r => ((r.paymentPlan && r.paymentPlan.payments) || []).filter(p => p && p.status === 'paid').reduce((n, p) => n + (Number(p.amount) || 0), 0);
+function totalOf(data, r) { const pk = (data.packs || []).find(p => p.id === r.packId); if (pk) return (Number(pk.classPrice) || 0) + (Number(pk.insurance) || 0) + (Number(pk.showFee) || 0); return Number(r.paymentPlan && r.paymentPlan.total) || 0; }
+/** Unpaid scheduled amounts for a registration (mirrors the admin screen's monthly table). */
+function dueItems(data, r) {
+  const out = [], plan = (r.paymentPlan && r.paymentPlan.facilityPlan) || null;
+  if (plan && Number(plan.months) > 0) {
+    const months = Math.min(36, Number(plan.months)), day = Math.max(1, Math.min(31, Number(plan.paymentDay) || 1)), start = String(plan.startDate || '');
+    const prev = Array.isArray(plan.rows) ? plan.rows : [], fixed = Math.round((Number(plan.monthlyAmount) || Number(prev[0] && prev[0].amount) || 0) * 100) / 100;
+    const paidPays = ((r.paymentPlan.payments) || []).filter(p => p && p.status === 'paid'), paidTotal = paidPays.reduce((n, x) => n + (Number(x.amount) || 0), 0);
+    for (let i = 0; i < months; i++) {
+      const old = prev[i] || {}; let due = old.dueDate || '';
+      if (/^\d{4}-\d{2}-\d{2}$/.test(start)) { const d = new Date(`${start}T12:00:00Z`); d.setUTCMonth(d.getUTCMonth() + i); const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate(); d.setUTCDate(Math.min(day, last)); due = d.toISOString().slice(0, 10); }
+      const paid = paidPays.length ? (fixed > 0 && paidTotal >= fixed * (i + 1)) : old.status === 'paid';
+      if (!paid && due && fixed > 0) out.push({ key: 'm' + (i + 1), dueDate: due, amount: fixed });
+    }
+  }
+  ((r.paymentPlan && r.paymentPlan.payments) || []).forEach(p => { if (p && p.status !== 'paid' && /^\d{4}-\d{2}-\d{2}$/.test(String(p.date || '')) && Number(p.amount) > 0) out.push({ key: 'p' + (p.id || p.date), dueDate: p.date, amount: Number(p.amount) }); });
+  return out.sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+}
+const withTimeout = (promise, ms = 8000) => Promise.race([promise, new Promise(res => setTimeout(() => res({ ok: false, error: 'timeout' }), ms))]);
+async function notifyOwner(data, built) {
+  const to = ownerAddress(data); if (!to || !mail.isConfigured()) return { ok: false, error: 'not configured' };
+  return withTimeout(mail.sendMail({ to, subject: built.subject, html: built.html, text: built.text }));
+}
+const adminUrlOf = req => { const h = req && req.headers && (req.headers['x-forwarded-host'] || req.headers.host); return `https://${h || 'localhost'}/admin`; };
+function newPaidPayments(before, after) {
+  const seen = new Set(); (before.registrations || []).forEach(r => ((r.paymentPlan && r.paymentPlan.payments) || []).forEach(p => { if (p && p.status === 'paid' && p.id) seen.add(String(p.id)); }));
+  const out = [];
+  (after.registrations || []).forEach(r => ((r.paymentPlan && r.paymentPlan.payments) || []).forEach(p => {
+    if (p && p.status === 'paid' && p.id && !seen.has(String(p.id))) { const total = totalOf(after, r), paid = paidSum(r); out.push({ name: r.name, className: r.className, phone: r.phone, email: r.email, amount: Number(p.amount) || 0, method: p.method, date: p.date, total, paid, remaining: Math.max(0, total - paid) }); }
+  }));
+  return out;
+}
+/** Emails the parent of every payment due on `target` (default: tomorrow in Tunisia). Safe to run many times: each reminder is sent once. */
+async function runReminders({ onlyId = null, force = false, offset = 1 } = {}) {
+  if (!mail.isConfigured()) return { ok: false, error: 'Email is not configured.', sent: 0 };
+  return withLock(async () => {
+    const data = await getData(); const prefs = mailPrefs(data);
+    if (!onlyId && !force && prefs.remindersOn === false) return { ok: true, sent: 0, skipped: 'reminders are switched off' };
+    const today = tunisToday(), target = addDaysIso(today, offset), school = data.siteSettings || {};
+    const sent = [], missing = [], failed = []; let changed = false;
+    for (const r of (data.registrations || [])) {
+      if (onlyId && r.id !== onlyId) continue;
+      if (!onlyId && r.interestStatus === 'not_interested') continue;
+      const items = dueItems(data, r).filter(i => onlyId ? true : i.dueDate === target);
+      const item = onlyId ? items[0] : null;
+      const list = onlyId ? (item ? [item] : []) : items;
+      if (!list.length) { if (onlyId) return { ok: false, error: 'This student has no scheduled payment to remind about.', sent: 0 }; continue; }
+      r.reminders = r.reminders && typeof r.reminders === 'object' ? r.reminders : {};
+      for (const it of list) {
+        const mark = `${it.dueDate}|${it.key}`;
+        if (!onlyId && !force && r.reminders[mark]) continue;
+        const to = [r.parentEmail, r.fatherEmail, r.email, r.motherEmail].find(e => mail.validEmail(e)) || '';
+        if (!to) { if (onlyId) return { ok: false, error: 'This student has no email address (add the parent email in the profile).', sent: 0 }; missing.push(`${r.name || 'Sans nom'} (${r.parentPhone || r.phone || 'pas de téléphone'}) — ${mail.money(it.amount)} le ${it.dueDate}`); r.reminders[mark] = 'no-email'; changed = true; continue; }
+        const diff = dayDiff(it.dueDate, today), when = diff === 1 ? 'demain' : diff === 0 ? 'aujourd’hui' : diff < 0 ? `depuis le ${it.dueDate}` : `le ${it.dueDate}`;
+        const total = totalOf(data, r), built = mail.parentReminder({ name: r.name, parentName: r.parentName || r.fatherName || r.motherName, className: r.className, amount: it.amount, dueDate: it.dueDate, remaining: Math.max(0, total - paidSum(r)), when }, school);
+        const res = await mail.sendMail({ to, subject: built.subject, html: built.html, text: built.text, replyTo: ownerAddress(data) });
+        if (res.ok) { r.reminders[mark] = new Date().toISOString(); r.audit = Array.isArray(r.audit) ? r.audit : []; r.audit.unshift({ id: rid('A'), at: new Date().toISOString(), action: 'Payment reminder emailed', detail: `${mail.money(it.amount)} due ${it.dueDate} → ${to}`, actor: 'system' }); sent.push(`${r.name} — ${mail.money(it.amount)} (${it.dueDate})`); changed = true; }
+        else failed.push(`${r.name}: ${res.error}`);
+      }
+    }
+    if (changed) { data._rev = (Number(data._rev) || 0) + 1; await putData(data); }
+    if (!onlyId && (sent.length || missing.length || failed.length)) await notifyOwner(data, mail.ownerDigest(sent, missing, failed, today));
+    return { ok: failed.length === 0 || sent.length > 0, sent: sent.length, missing: missing.length, failed, detail: sent };
+  });
+}
+
 async function handle(req, res) {
   try {
     const url = new URL(req.url, `https://${req.headers.host || 'localhost'}`);
@@ -307,6 +383,32 @@ async function handle(req, res) {
       });
     }
 
+    if (path === '/api/mail-status' && method === 'GET') {
+      const actor = await requireUser(req, res); if (!actor) return;
+      const data = await getData(); const cfg = mail.config(); const prefs = mailPrefs(data);
+      return json(res, 200, { ok: true, configured: !!cfg.provider, provider: cfg.provider, from: cfg.from || '', owner: ownerAddress(data), prefs });
+    }
+    if (path === '/api/send-test-email' && method === 'POST') {
+      const actor = await requireUser(req, res, { role: 'admin' }); if (!actor) return;
+      if (!throttle('mailtest:' + actor.sub, 6, 15 * 60 * 1000)) return json(res, 429, { ok: false, error: 'Too many test emails. Try again later.' });
+      const data = await getData(); const to = ownerAddress(data);
+      if (!mail.isConfigured()) return json(res, 400, { ok: false, error: 'Email is not configured yet: add BREVO_API_KEY and MAIL_FROM in the hosting settings.' });
+      if (!to) return json(res, 400, { ok: false, error: 'Set the owner email address first.' });
+      const r = await mail.sendMail({ to, subject: 'Test — Solid Dance School', html: '<p>✅ Les emails du site Solid Dance School fonctionnent. Vous recevrez ici les nouvelles inscriptions et les paiements.</p>', text: 'Les emails du site Solid Dance School fonctionnent.' });
+      return json(res, r.ok ? 200 : 502, r.ok ? { ok: true, to } : { ok: false, error: r.error });
+    }
+    if (path === '/api/send-reminders' && method === 'POST') {
+      const actor = await requireUser(req, res); if (!actor) return;
+      if (!throttle('remind:' + actor.sub, 30, 15 * 60 * 1000)) return json(res, 429, { ok: false, error: 'Too many requests. Try again later.' });
+      const body = await readBody(req);
+      const out = await runReminders(body.registrationId ? { onlyId: String(body.registrationId).slice(0, 60) } : { offset: body.today ? 0 : 1, force: !!body.force });
+      return json(res, out.ok ? 200 : 400, out);
+    }
+    if (path === '/api/cron-reminders' && (method === 'GET' || method === 'POST')) {
+      const secret = process.env.CRON_SECRET || ''; const given = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '') || String(req.headers['x-cron-secret'] || '');
+      if (!secret || !safeEqual(given, secret)) return json(res, 401, { ok: false, error: 'Unauthorized.' });
+      return json(res, 200, await runReminders({}));
+    }
     if (path === '/api/upload-url' && method === 'POST') {
       const actor = await requireUser(req, res, { role: 'admin' }); if (!actor) return;
       if (!SERVICE_KEY) return json(res, 501, { ok: false, error: 'File storage is not configured on this server.' });
@@ -347,6 +449,7 @@ async function handle(req, res) {
         const next = mergeAdminSave(seeded, body.data, body.known, actor.role);
         await putData(next);
         await removeUnusedMedia(seeded, next);
+        try { if (mailPrefs(next).notifyPayments !== false) { const paidNow = newPaidPayments(seeded, next); if (paidNow.length) await notifyOwner(next, mail.ownerPayment(paidNow.slice(0, 8), adminUrlOf(req) + '/payments')); } } catch (e) { /* never block saving */ }
         const out = { ...next }; delete out._adminUsers;
         return json(res, 200, { ok: true, rev: next._rev, merged: { registrations: out.registrations, notifications: out.notifications } });
       });
@@ -376,6 +479,7 @@ async function handle(req, res) {
         data.notifications = data.notifications.slice(0, 200);
         data._rev = (Number(data._rev) || 0) + 1;
         await putData(data);
+        if (!duplicate && mailPrefs(data).notifyRegistrations !== false) await notifyOwner(data, mail.ownerNewRegistration(entry, adminUrlOf(req)));
         return json(res, 200, { ok: true, duplicate: !!duplicate });
       });
     }
@@ -421,4 +525,5 @@ async function handle(req, res) {
 
 module.exports = handle;
 module.exports.handle = handle;
-module.exports._test = { mergeAdminSave, sanitizeRegistration };
+module.exports.runReminders = runReminders;
+module.exports._test = { mergeAdminSave, sanitizeRegistration, dueItems, newPaidPayments, tunisToday };

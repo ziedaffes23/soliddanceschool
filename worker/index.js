@@ -37,6 +37,10 @@ async function handleApi(request, env) {
 }
 
 export default {
+  async scheduled(event, env, ctx) {
+    const core = await loadCore(env);
+    ctx.waitUntil(core.runReminders({}).catch(() => {}));
+  },
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
     if (pathname === '/api' || pathname.startsWith('/api/')) return handleApi(request, env);

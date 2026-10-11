@@ -36,3 +36,12 @@ const server = http.createServer(async (req, res) => {
   } catch (err) { responseError(res, err); }
 });
 server.listen(PORT, '0.0.0.0', () => console.log(`Solid Dance School server listening on ${PORT}`));
+
+// Daily payment reminders (08:00+ Tunisia time). Each reminder is sent once, so repeated checks are harmless.
+if (handleApi.runReminders && process.env.SOLID_REMINDER_CRON !== '0') {
+  let lastRun = '';
+  setInterval(() => {
+    const now = new Date(), day = now.toLocaleDateString('en-CA', { timeZone: 'Africa/Tunis' }), hour = Number(now.toLocaleTimeString('en-GB', { timeZone: 'Africa/Tunis', hour: '2-digit', hour12: false }));
+    if (hour >= 8 && lastRun !== day) { lastRun = day; handleApi.runReminders({}).catch(e => console.error('[reminders]', e.message)); }
+  }, 10 * 60 * 1000);
+}

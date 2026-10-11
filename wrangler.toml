@@ -11,3 +11,7 @@ directory = "./dist"
 binding = "ASSETS"
 not_found_handling = "404-page"
 run_worker_first = ["/api/*"]
+
+# Daily payment reminders (07:00 UTC = 08:00 in Tunisia): emails parents whose payment is due tomorrow.
+[triggers]
+crons = ["0 7 * * *"]
